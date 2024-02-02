@@ -1,0 +1,36 @@
+name: Update Googlebots
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: "0 15 * * *" # UTC time for 00:00 KST
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Run Script
+        run: |
+          chmod +x ./googlebot/start.sh
+          ./googlebot/start.sh
+
+      - name: Extract Timestamp from File
+        id: extract-timestamp
+        run: |
+          googlebot_utc=$(cat ./googlebot/timestamp.txt)
+          echo "googlebot_utc=${googlebot_utc}" >> $GITHUB_OUTPUT
+
+      - name: Git Auto Commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "(bot) Apply Googlebot changes - ${{ steps.extract-timestamp.outputs.googlebot_utc }}"
+          push_options: '--force'
