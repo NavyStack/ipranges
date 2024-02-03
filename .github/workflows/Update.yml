@@ -92,3 +92,18 @@ jobs:
         with:
           commit_message: "[BOT] [Cloudflare] changes - ${{ steps.cloudflare-extract-timestamp.outputs.cloudflare_utc }}"
           push_options: '--force'
+
+      - name: Run AWS Script
+        run: |
+          chmod +x ./amazon/start.sh
+          ./amazon/start.sh
+
+      - name: Extract Timestamp from File (AWS)
+        id: amazon-extract-timestamp
+        run: echo "amazon_utc=$(<./amazon/timestamp.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Git Auto Commit (AWS)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[BOT] [AWS] changes - ${{ steps.amazon-extract-timestamp.outputs.amazon_utc }}"
+          push_options: '--force'
