@@ -30,5 +30,5 @@ jobs:
       - name: Git Auto Commit (Googlebot)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "(bot) Apply Googlebot changes - ${{ steps.extract-timestamp.outputs.googlebot_utc }}"
+          commit_message: "[BOT] [Googlebot] changes - ${{ steps.extract-timestamp.outputs.googlebot_utc }}"
           push_options: '--force'
