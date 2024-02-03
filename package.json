@@ -1,17 +1,19 @@
 {
-    "name": "navystack-ipranges",
-    "version": "0.1.0",
-    "description": "",
-    "main": "index.mjs",
-    "scripts": {
-      "build": "node index.mjs",
-      "t2": "DEBUG=true node index.mjs"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "MIT",
-    "devDependencies": {
-      "cidr-tools": "^7.0.4"
-    }
+  "name": "navystack-ipranges",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.mjs",
+  "scripts": {
+    "build": "node index.mjs",
+    "t1": "prettier -w . && eslint .",
+    "t2": "DEBUG=true node index.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "cidr-tools": "^7.0.4",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.4"
   }
-  
+}
