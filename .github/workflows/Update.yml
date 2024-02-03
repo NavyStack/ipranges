@@ -32,3 +32,18 @@ jobs:
         with:
           commit_message: "[BOT] [Googlebot] changes - ${{ steps.extract-timestamp.outputs.googlebot_utc }}"
           push_options: '--force'
+
+      - name: Run OCI Script
+        run: |
+          chmod +x ./oracle/start.sh
+          ./oracle/start.sh
+
+      - name: Extract Timestamp from File (OCI)
+        id: extract-timestamp
+        run: echo "oracle_utc=$(<./oracle/timestamp.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Git Auto Commit (OCI)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[BOT] [OCI] changes - ${{ steps.extract-timestamp.outputs.oracle_utc }}"
+          push_options: '--force'
