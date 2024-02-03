@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -euo pipefail
+set -x
+
 # Define file paths
 json_file="/tmp/oracle.json"
 timestamp_file="oracle/timestamp.txt"
@@ -14,17 +17,20 @@ ipv4_comma_output="oracle/ipv4_comma.txt"
 # ipv6_comma_output="oracle/ipv6_comma.txt"
 
 
-# Check if timestamp file exists and remove it
+# Check if the timestamp_file exists and remove it if it does
 if [ -e "$timestamp_file" ]; then
     rm "$timestamp_file"
+    echo "Step 0: File $timestamp_file removed successfully."
+else
+    echo "Step 0: File $timestamp_file does not exist. Skip."
 fi
 
-# Download public ORACLE IP ranges
-curl -s https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json > "$json_file"
 
-# Check if the curl command was successful
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to download ORACLE IP ranges using curl."
+# Download public ORACLE IP ranges
+if curl -s https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json > "$json_file"; then
+    echo "Step 1: Data fetched from ORACLE IP ranges using curl successfully."
+else
+    echo "Step 1: Failed to download ORACLE IP ranges using curl." >&2
     exit 1
 fi
 
@@ -35,32 +41,31 @@ oracle_utc=$(date -d "$timestamp" -u +"%Y-%m-%dT%H:%M:%S.000000Z")
 # Save timestamp to file
 echo "$oracle_utc" > "$timestamp_file"
 
-# Save IPv4 addresses
-jq '.regions[] | [.cidrs][] | .[].cidr | select(. != null)' -r "$json_file" > "$ipv4_file"
-
-# Check if the jq command was successful
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to extract IPv4 addresses using jq."
+# Save IPv4 addresses and check if the jq command was successful
+if jq '.regions[] | [.cidrs][] | .[].cidr | select(. != null)' -r "$json_file" > "$ipv4_file"; then
+    echo "Step 2: IPv4 addresses extracted successfully."
+else
+    echo "Step 2: Failed to extract IPv4 addresses using jq."
     exit 1
 fi
 
-# Sort and remove duplicates for IPv4
-sort -V "$ipv4_file" | uniq > "$ipv4_output"
-
-# Check if the sort command was successful
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to sort IPv4 addresses."
+# Sort and remove duplicates for IPv4 and check if the sort command was successful
+if sort -V "$ipv4_file" | uniq > "$ipv4_output"; then
+    echo "Step 3: IPv4 addresses sorted and duplicates removed successfully."
+else
+    echo "Step 3: Failed to sort IPv4 addresses."
     exit 1
 fi
 
-# Save IPv4 addresses with comma separation
-jq -r '.regions[] | [.cidrs][] | .[].cidr | select(. != null)' "$json_file" | sort -V | uniq | paste -sd "," - > "$ipv4_comma_output"
-
-# Check if the jq and sort commands were successful
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to process IPv4 addresses for comma separation."
+# Save IPv4 addresses with comma separation and check if the jq and sort commands were successful
+if jq -r '.regions[] | [.cidrs][] | .[].cidr | select(. != null)' "$json_file" | sort -V | uniq | paste -sd "," - > "$ipv4_comma_output"; then
+    echo "Step 4: IPv4 addresses processed for comma separation successfully."
+else
+    echo "Step 4: Failed to process IPv4 addresses for comma separation."
     exit 1
 fi
 
 # Clean up temporary files
 rm "$json_file" "$ipv4_file"
+
+echo "OCI Complete!"

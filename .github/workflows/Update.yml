@@ -47,3 +47,43 @@ jobs:
         with:
           commit_message: "[BOT] [OCI] changes - ${{ steps.oracle-extract-timestamp.outputs.oracle_utc }}"
           push_options: '--force'
+
+      - name: Run Azure Script
+        run: |
+          chmod +x ./microsoft-azure/start.sh
+          ./microsoft-azure/start.sh
+
+      - name: Extract Timestamp from File (Azure)
+        id: azure-extract-timestamp
+        run: echo "azure_utc=$(<./microsoft-azure/timestamp.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Git Auto Commit (Azure)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[BOT] [Azure] changes - ${{ steps.azure-extract-timestamp.outputs.azure_utc }}"
+          push_options: '--force'
+
+      - name: Run Github Script
+        run: |
+          chmod +x ./github/start.sh
+          ./github/start.sh
+
+      - name: Extract Timestamp from File (Github)
+        id: github-extract-timestamp
+        run: echo "github_utc=$(<./github/timestamp.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Git Auto Commit (Github)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[BOT] [Github] changes - ${{ steps.github-extract-timestamp.outputs.github_utc }}"
+          push_options: '--force'
+
+      - name: Extract Timestamp from File (Cloudflare)
+        id: cloudflare-extract-timestamp
+        run: echo "cloudflare_utc=$(<./cloudflare/timestamp.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Git Auto Commit (Cloudflare)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[BOT] [Cloudflare] changes - ${{ steps.cloudflare-extract-timestamp.outputs.cloudflare_utc }}"
+          push_options: '--force'
