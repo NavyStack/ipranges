@@ -78,6 +78,11 @@ jobs:
           commit_message: "[BOT] [Github] changes - ${{ steps.github-extract-timestamp.outputs.github_utc }}"
           push_options: '--force'
 
+      - name: Run Cloudflare Script
+        run: |
+          chmod +x ./cloudflare/start.sh
+          ./cloudflare/start.sh
+
       - name: Extract Timestamp from File (Cloudflare)
         id: cloudflare-extract-timestamp
         run: echo "cloudflare_utc=$(<./cloudflare/timestamp.txt)" >> "$GITHUB_OUTPUT"
