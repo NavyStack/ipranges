@@ -19,7 +19,7 @@ This script simplifies the organization of publicly available IP addresses gathe
 
 ## Important Note:
 
-All IP lists utilized by this script are sourced from public domains. <br /> Contributions or suggestions for improvement are warmly welcomed!
+All IP lists utilized by this script are sourced from public sources. <br /> Contributions or suggestions for improvement are warmly welcomed!
 
 ---
 
