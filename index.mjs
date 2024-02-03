@@ -1,89 +1,116 @@
 import { merge } from 'cidr-tools'
-import fs from 'fs'
-import readline from 'readline'
+import { promises as fs } from 'fs'
 import path from 'path'
 
-// const FILE_EXTENSIONS = ['.txt']
+const DEBUG_MODE = Boolean(process.env.DEBUG)
+const FILE_EXTENSION = '.txt'
 const OUTPUT_SUFFIX = '_mini'
 
-const findFilesRecursively = async (dir, fileList = []) => {
+const logMessage = (outputRelativePath, sourceFilePath) => {
+  DEBUG_MODE &&
+    console.log(
+      `File "${outputRelativePath}" created with merged CIDR addresses from "${sourceFilePath}".`
+    )
+}
+
+const readAddressesFromFile = async (filePath) => {
   try {
-    const files = await fs.promises.readdir(dir)
-
-    for (const file of files) {
-      const filePath = path.join(dir, file)
-      const stats = await fs.promises.stat(filePath)
-
-      if (stats.isDirectory()) {
-        await findFilesRecursively(filePath, fileList)
-      } else {
-        fileList.push(filePath)
-      }
-    }
+    const content = await fs.readFile(filePath, 'utf-8')
+    return content.trim().split('\n')
   } catch (error) {
-    console.error(`Error reading directory "${dir}": ${error.message}`)
+    console.error(`Error reading file "${filePath}": ${error.message}`)
+    throw error
   }
+}
 
-  return fileList
+const writeAddressesToFile = async (outputPath, addresses) => {
+  try {
+    await fs.writeFile(outputPath, addresses.join('\n'))
+  } catch (error) {
+    console.error(`Error writing to file "${outputPath}": ${error.message}`)
+    throw error
+  }
 }
 
 const processFile = async (sourceFilePath, outputSuffix) => {
   try {
-    const readInterface = readline.createInterface({
-      input: fs.createReadStream(sourceFilePath),
-      output: process.env.DEBUG === 'true' ? process.stdout : null,
-      console: false
-    })
+    const inputAddresses = await readAddressesFromFile(sourceFilePath)
+    const mergedAddresses = merge(inputAddresses)
 
-    const addresses = []
-
-    for await (const line of readInterface) {
-      addresses.push(line.trim())
-    }
-
-    const mergedNetworks = merge(addresses)
-    const outputFileName = path.join(
+    const baseName = path.basename(sourceFilePath, path.extname(sourceFilePath))
+    const outputFileName = `${baseName}${outputSuffix}${path.extname(sourceFilePath)}`
+    const outputRelativePath = path.join(
       path.dirname(sourceFilePath),
-      `${path.basename(sourceFilePath, path.extname(sourceFilePath))}${outputSuffix}${path.extname(sourceFilePath)}`
+      outputFileName
     )
-    const outputPath = path.resolve(outputFileName)
+    const outputPath = path.resolve(outputRelativePath)
 
-    await fs.promises.writeFile(outputPath, mergedNetworks.join('\n'))
+    await writeAddressesToFile(outputPath, mergedAddresses)
+    logMessage(outputRelativePath, sourceFilePath)
 
-    console.log(`File "${outputFileName}" created with merged CIDR addresses.`)
+    return outputRelativePath
   } catch (error) {
     console.error(`Error processing file "${sourceFilePath}": ${error.message}`)
+    return null
+  }
+}
+
+const findFilesRecursively = async (dir) => {
+  try {
+    const files = await fs.readdir(dir)
+    const fileLists = await Promise.all(
+      files.map(async (file) => {
+        const filePath = path.join(dir, file)
+        const stats = await fs.stat(filePath)
+        return stats.isDirectory() ? findFilesRecursively(filePath) : [filePath]
+      })
+    )
+    return fileLists.flat()
+  } catch (error) {
+    console.error(`Error finding files in directory "${dir}": ${error.message}`)
+    throw error
   }
 }
 
 const processFiles = async (filesToProcess) => {
   try {
     const filesFound = await findFilesRecursively(process.cwd())
-
-    await Promise.all(
-      filesToProcess.map(async (fileName) => {
-        const sourceFilePaths = filesFound.filter((file) =>
-          file.toLowerCase().endsWith(fileName.toLowerCase())
-        )
-
-        if (sourceFilePaths.length === 0) {
-          console.error(
-            `File "${fileName}" not found in the current directory or its subdirectories.`
-          )
-        }
-
-        await Promise.all(
-          sourceFilePaths.map(async (sourceFilePath) => {
-            await processFile(sourceFilePath, OUTPUT_SUFFIX)
-          })
-        )
-      })
+    const supportedFiles = filesFound.filter((file) =>
+      file.toLowerCase().endsWith(FILE_EXTENSION)
     )
+
+    const processFileName = async (fileName) => {
+      const sourceFilePaths = supportedFiles.filter((file) =>
+        file.toLowerCase().endsWith(fileName.toLowerCase())
+      )
+
+      if (sourceFilePaths.length === 0) {
+        console.error(
+          `File "${fileName}" not found in the current directory or its subdirectories.`
+        )
+        return null
+      }
+
+      return Promise.all(
+        sourceFilePaths.map((sourceFilePath) =>
+          processFile(sourceFilePath, OUTPUT_SUFFIX)
+        )
+      )
+    }
+
+    const results = (await Promise.all(filesToProcess.map(processFileName)))
+      .flat()
+      .filter((result) => result !== null)
+
+    return results
   } catch (error) {
     console.error(`Error processing files: ${error.message}`)
+    return []
   }
 }
 
 const filesToProcess = ['ipv4.txt', 'ipv6.txt']
 
 processFiles(filesToProcess)
+  .then((result) => console.log('All files processed successfully:', result))
+  .catch((error) => console.error('Error during file processing:', error))
