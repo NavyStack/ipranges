@@ -25,9 +25,7 @@ jobs:
 
       - name: Extract Timestamp from File (Googlebot)
         id: extract-timestamp
-        run: |
-          googlebot_utc=$(cat ./googlebot/timestamp.txt)
-          echo "googlebot_utc=${googlebot_utc}" >> $GITHUB_OUTPUT
+        run: echo "googlebot_utc=$(<./googlebot/timestamp.txt)" >> "$GITHUB_OUTPUT"
 
       - name: Git Auto Commit (Googlebot)
         uses: stefanzweifel/git-auto-commit-action@v5
