@@ -1,0 +1,17 @@
+{
+    "name": "navystack-ipranges",
+    "version": "0.1.0",
+    "description": "",
+    "main": "index.mjs",
+    "scripts": {
+      "build": "node index.mjs",
+      "t2": "DEBUG=true node index.mjs"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+      "cidr-tools": "^7.0.4"
+    }
+  }
+  
