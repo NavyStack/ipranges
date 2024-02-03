@@ -1,4 +1,4 @@
-import merge from 'cidr-tools/merge'
+import { merge } from 'cidr-tools'
 import fs from 'fs'
 import readline from 'readline'
 import path from 'path'
@@ -32,7 +32,8 @@ const processFiles = async (filesToProcess, outputSuffix) => {
       try {
         const readInterface = readline.createInterface({
           input: fs.createReadStream(sourceFilePath),
-          output: process.env.DEBUG === 'true' ? process.stdout : null
+          output: process.env.DEBUG === 'true' ? process.stdout : null,
+          console: false
         })
 
         const addresses = []

@@ -6,7 +6,7 @@ on:
       - main
   workflow_dispatch:
   schedule:
-    - cron: "53 */3 * * *" # I'm on a prime schedule - every 3 hours at 53 minutes, because ordinary schedules are just too divisible! :)
+    - cron: '53 */3 * * *' # I'm on a prime schedule - every 3 hours at 53 minutes, because ordinary schedules are just too divisible! :)
 
 jobs:
   run-script:
@@ -30,7 +30,7 @@ jobs:
       - name: Git Auto Commit (Googlebot)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[BOT] [Googlebot] changes - ${{ steps.googlebot-extract-timestamp.outputs.googlebot_utc }}"
+          commit_message: '[BOT] [Googlebot] changes - ${{ steps.googlebot-extract-timestamp.outputs.googlebot_utc }}'
           push_options: '--force'
 
       - name: Run OCI Script
@@ -45,7 +45,7 @@ jobs:
       - name: Git Auto Commit (OCI)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[BOT] [OCI] changes - ${{ steps.oracle-extract-timestamp.outputs.oracle_utc }}"
+          commit_message: '[BOT] [OCI] changes - ${{ steps.oracle-extract-timestamp.outputs.oracle_utc }}'
           push_options: '--force'
 
       - name: Run Azure Script
@@ -60,7 +60,7 @@ jobs:
       - name: Git Auto Commit (Azure)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[BOT] [Azure] changes - ${{ steps.azure-extract-timestamp.outputs.azure_utc }}"
+          commit_message: '[BOT] [Azure] changes - ${{ steps.azure-extract-timestamp.outputs.azure_utc }}'
           push_options: '--force'
 
       - name: Run Github Script
@@ -75,7 +75,7 @@ jobs:
       - name: Git Auto Commit (Github)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[BOT] [Github] changes - ${{ steps.github-extract-timestamp.outputs.github_utc }}"
+          commit_message: '[BOT] [Github] changes - ${{ steps.github-extract-timestamp.outputs.github_utc }}'
           push_options: '--force'
 
       - name: Run Cloudflare Script
@@ -90,7 +90,7 @@ jobs:
       - name: Git Auto Commit (Cloudflare)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[BOT] [Cloudflare] changes - ${{ steps.cloudflare-extract-timestamp.outputs.cloudflare_utc }}"
+          commit_message: '[BOT] [Cloudflare] changes - ${{ steps.cloudflare-extract-timestamp.outputs.cloudflare_utc }}'
           push_options: '--force'
 
       - name: Run AWS Script
@@ -105,7 +105,7 @@ jobs:
       - name: Git Auto Commit (AWS)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[BOT] [AWS] changes - ${{ steps.amazon-extract-timestamp.outputs.amazon_utc }}"
+          commit_message: '[BOT] [AWS] changes - ${{ steps.amazon-extract-timestamp.outputs.amazon_utc }}'
           push_options: '--force'
 
       - name: Run Bing Script
@@ -120,5 +120,44 @@ jobs:
       - name: Git Auto Commit (Bing)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[BOT] [Bing] changes - ${{ steps.bingbot-extract-timestamp.outputs.bingbot_utc }}"
+          commit_message: '[BOT] [Bing] changes - ${{ steps.bingbot-extract-timestamp.outputs.bingbot_utc }}'
+          push_options: '--force'
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: build
+        run: pnpm build
+
+      - name: set env
+        run: echo "NOW=$(TZ=Asia/Seoul date +'%Y.%m.%d')" >> $GITHUB_ENV
+
+      - name: Mini Commit And Push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '[BOT] [MINI] changes - ${{ env.NOW }}'
           push_options: '--force'
