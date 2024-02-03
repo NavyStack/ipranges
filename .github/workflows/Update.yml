@@ -1,4 +1,4 @@
-name: Update Googlebots
+name: Update
 
 on:
   push:
@@ -18,18 +18,18 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Run Script
+      - name: Run Googlebot Script
         run: |
           chmod +x ./googlebot/start.sh
           ./googlebot/start.sh
 
-      - name: Extract Timestamp from File
+      - name: Extract Timestamp from File (Googlebot)
         id: extract-timestamp
         run: |
           googlebot_utc=$(cat ./googlebot/timestamp.txt)
           echo "googlebot_utc=${googlebot_utc}" >> $GITHUB_OUTPUT
 
-      - name: Git Auto Commit
+      - name: Git Auto Commit (Googlebot)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "(bot) Apply Googlebot changes - ${{ steps.extract-timestamp.outputs.googlebot_utc }}"
