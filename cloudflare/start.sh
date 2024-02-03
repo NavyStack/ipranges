@@ -67,8 +67,8 @@ else
 fi
 
 # Step 5: Save timestamp to the timestamp file
-timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.000000Z")
-echo "$timestamp" > "$timestamp_file"
-echo "Step 5: Timestamp saved successfully."
+# timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.000000Z")
+# echo "$timestamp" > "$timestamp_file"
+# echo "Step 5: Timestamp saved successfully."
 
 echo "Cloudflare Complete!"

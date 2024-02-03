@@ -70,8 +70,8 @@ download_and_parse "57062" "china"
 # Consolidate files for all regions
 consolidate_files
 
-timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.000000Z")
-echo "$timestamp" > "$timestamp_file"
-echo "Timestamp saved successfully."
+# timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.000000Z")
+# echo "$timestamp" > "$timestamp_file"
+# echo "Timestamp saved successfully."
 
 echo "Azure Complete!"
