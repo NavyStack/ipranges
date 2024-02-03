@@ -8,7 +8,11 @@
     "t1": "prettier -w . && eslint .",
     "t2": "DEBUG=true node index.mjs"
   },
-  "keywords": ["CIDR", "IP ranges", "tool"],
+  "keywords": [
+    "CIDR",
+    "IP ranges",
+    "tool"
+  ],
   "author": "NavyStack <137406386+Navystack@users.noreply.github.com>",
   "repository": {
     "type": "git",
