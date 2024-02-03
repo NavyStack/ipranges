@@ -10,6 +10,9 @@ ipv4_comma_output="googlebot/ipv4_comma.txt"
 ipv6_comma_output="googlebot/ipv6_comma.txt"
 timestamp_file="googlebot/timestamp.txt"
 
+# Remove existing timestamp file
+rm -f "$timestamp_file"
+
 # Download public GoogleBot IP ranges
 curl -s https://developers.google.com/search/apis/ipranges/googlebot.json > "$json_file"
 
