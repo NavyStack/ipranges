@@ -1,10 +1,10 @@
 import { merge } from 'cidr-tools';
 import { promises as fs } from 'fs';
 import path from 'path';
-const DEBUG_MODE = process.env.NODE_ENV === 'development';
-const OUTPUT_SUFFIX = '_mini';
+const debugMode = process.env.NODE_ENV === 'development';
+const outputSuffix = '_mini';
 const logMessage = (outputRelativePath, sourceFilePath) => {
-    DEBUG_MODE &&
+    debugMode &&
         console.log(`File "${outputRelativePath}" created with merged CIDR addresses from "${sourceFilePath}".`);
 };
 const logError = (message, error) => {
@@ -29,14 +29,14 @@ const writeAddressesToFile = async (outputPath, addresses) => {
         throw error;
     }
 };
-const mergeAddresses = async (addresses) => {
+const mergeAddresses = (addresses) => {
     try {
         const mergedAddresses = merge(addresses);
         return Promise.resolve(mergedAddresses);
     }
     catch (error) {
         logError('merging addresses', error);
-        throw error;
+        return Promise.reject(error);
     }
 };
 const processFile = async (sourceFilePath, outputSuffix) => {
@@ -87,7 +87,7 @@ const processFiles = async (filesToProcess) => {
                 console.error(`File "${fileName}" not found in the current directory or its subdirectories.`);
                 return null;
             }
-            const processFileResults = await Promise.allSettled(sourceFilePaths.map(async (sourceFilePath) => processFile(sourceFilePath, OUTPUT_SUFFIX)));
+            const processFileResults = await Promise.allSettled(sourceFilePaths.map(async (sourceFilePath) => processFile(sourceFilePath, outputSuffix)));
             const flattenedResults = processFileResults
                 .map((result) => result.status === 'fulfilled' ? result.value : null)
                 .filter((result) => result !== null);

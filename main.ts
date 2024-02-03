@@ -2,14 +2,14 @@ import { merge } from 'cidr-tools'
 import { promises as fs } from 'fs'
 import path from 'path'
 
-const DEBUG_MODE = process.env.NODE_ENV === 'development'
-const OUTPUT_SUFFIX = '_mini'
+const debugMode = process.env.NODE_ENV === 'development'
+const outputSuffix = '_mini'
 
 const logMessage = (
   outputRelativePath: string,
   sourceFilePath: string
 ): void => {
-  DEBUG_MODE &&
+  debugMode &&
     console.log(
       `File "${outputRelativePath}" created with merged CIDR addresses from "${sourceFilePath}".`
     )
@@ -41,13 +41,13 @@ const writeAddressesToFile = async (
   }
 }
 
-const mergeAddresses = async (addresses: string[]): Promise<string[]> => {
+const mergeAddresses = (addresses: string[]): Promise<string[]> => {
   try {
     const mergedAddresses = merge(addresses)
     return Promise.resolve(mergedAddresses)
   } catch (error: unknown) {
     logError('merging addresses', error as Error)
-    throw error
+    return Promise.reject(error)
   }
 }
 
@@ -120,7 +120,7 @@ const processFiles = async (filesToProcess: string[]): Promise<string[]> => {
 
         const processFileResults = await Promise.allSettled(
           sourceFilePaths.map(async (sourceFilePath) =>
-            processFile(sourceFilePath, OUTPUT_SUFFIX)
+            processFile(sourceFilePath, outputSuffix)
           )
         )
 
