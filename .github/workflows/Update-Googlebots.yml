@@ -6,7 +6,7 @@ on:
       - main
   workflow_dispatch:
   schedule:
-    - cron: "53 */3 * * *" # I'm on a prime schedule - every 3 hours at 53 minutes, because ordinary schedules are just too divisible!
+    - cron: "53 */3 * * *" # I'm on a prime schedule - every 3 hours at 53 minutes, because ordinary schedules are just too divisible! :)
 
 jobs:
   run-script:
