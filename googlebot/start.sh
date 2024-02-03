@@ -2,13 +2,15 @@
 
 # Define file paths
 json_file="/tmp/googlebot.json"
-ipv4_file="/tmp/googlebot-ipv4.txt"
-ipv6_file="/tmp/googlebot-ipv6.txt"
-ipv4_output="googlebot/ipv4.txt"
-ipv6_output="googlebot/ipv6.txt"
-ipv4_comma_output="googlebot/ipv4_comma.txt"
-ipv6_comma_output="googlebot/ipv6_comma.txt"
 timestamp_file="googlebot/timestamp.txt"
+
+ipv4_file="/tmp/googlebot-ipv4.txt"
+ipv4_comma_output="googlebot/ipv4_comma.txt"
+ipv4_output="googlebot/ipv4.txt"
+
+ipv6_file="/tmp/googlebot-ipv6.txt"
+ipv6_output="googlebot/ipv6.txt"
+ipv6_comma_output="googlebot/ipv6_comma.txt"
 
 # Check if timestamp file exists and remove it
 if [ -e "$timestamp_file" ]; then
