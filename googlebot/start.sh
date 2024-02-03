@@ -27,7 +27,7 @@ fi
 if curl -s https://developers.google.com/search/apis/ipranges/googlebot.json > "$json_file"; then
     echo "Step 1: Data fetched from GoogleBot IP ranges using curl successfully."
 else
-    echo "Step 1: Failed to download ORACLE IP ranges using curl." >&2
+    echo "Step 1: Failed to download GoogleBot IP ranges using curl." >&2
     exit 1
 fi
 
