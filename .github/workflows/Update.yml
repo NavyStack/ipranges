@@ -123,6 +123,21 @@ jobs:
           commit_message: '[BOT] [Bing] changes - ${{ steps.bingbot-extract-timestamp.outputs.bingbot_utc }}'
           push_options: '--force'
 
+      - name: Run Vultr Script
+        run: |
+          chmod +x ./vultr/start.sh
+          ./vultr/start.sh
+
+      - name: Extract Timestamp from File (Vultr)
+        id: vultr-extract-timestamp
+        run: echo "vultr_utc=$(<./vultr/timestamp.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Git Auto Commit (Vultr)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '[BOT] [Vultr] changes - ${{ steps.vultr-extract-timestamp.outputs.vultr_utc }}'
+          push_options: '--force'
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:

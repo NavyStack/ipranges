@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc && node main.js ipv4.txt ipv6.txt",
     "t1": "prettier -w . && eslint .",
-    "t2": "DEBUG=true node main.js"
+    "t2": "NODE_ENV=development node main.js ipv4.txt ipv6.txt"
   },
   "keywords": [
     "CIDR",
