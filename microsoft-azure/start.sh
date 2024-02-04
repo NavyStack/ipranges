@@ -17,8 +17,8 @@ else
     echo "Step 0: File $timestamp_file does not exist. Skip."
 fi
 
-# Function to download and parse Microsoft IP ranges for a given region
-download_and_parse() {
+# Function to download and parse Microsoft IP ranges for a given region in the background
+download_and_parse_background() {
     local REGION_ID="$1"
     local REGION_NAME="$2"
     local OUTPUT_DIR="microsoft-azure/${REGION_NAME}"
@@ -61,11 +61,14 @@ consolidate_files() {
     cat "${OUTPUT_DIR}"/*/ipv6_comma.txt > "${OUTPUT_DIR}/all_ipv6_comma.txt"
 }
 
-# Download and parse IP ranges for each region
-download_and_parse "56519" "public-cloud"
-download_and_parse "57063" "us-gov"
-download_and_parse "57064" "germany"
-download_and_parse "57062" "china"
+# Download and parse IP ranges for each region in parallel
+download_and_parse_background "56519" "public-cloud"
+download_and_parse_background "57063" "us-gov"
+download_and_parse_background "57064" "germany"
+download_and_parse_background "57062" "china"
+
+# Wait for all background processes to finish
+wait
 
 # Consolidate files for all regions
 consolidate_files
