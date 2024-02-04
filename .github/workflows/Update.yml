@@ -153,6 +153,21 @@ jobs:
           commit_message: '[BOT] [Linode] changes - ${{ steps.linode-extract-timestamp.outputs.linode_utc }}'
           push_options: '--force'
 
+      - name: Run Digitalocean Script
+        run: |
+          chmod +x ./digitalocean/start.sh
+          ./digitalocean/start.sh
+
+      - name: Extract Timestamp from File (Digitalocean)
+        id: digitalocean-extract-timestamp
+        run: echo "digitalocean_utc=$(<./digitalocean/timestamp.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Git Auto Commit (Digitalocean)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '[BOT] [Digitalocean] changes - ${{ steps.digitalocean-extract-timestamp.outputs.digitalocean_utc }}'
+          push_options: '--force'
+
       ##################################################################################################################################
       - name: Install Node.js
         uses: actions/setup-node@v4
