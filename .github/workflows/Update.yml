@@ -138,6 +138,22 @@ jobs:
           commit_message: '[BOT] [Vultr] changes - ${{ steps.vultr-extract-timestamp.outputs.vultr_utc }}'
           push_options: '--force'
 
+      - name: Run Linode Script
+        run: |
+          chmod +x ./linode/start.sh
+          ./linode/start.sh
+
+      - name: Extract Timestamp from File (Linode)
+        id: linode-extract-timestamp
+        run: echo "linode_utc=$(<./linode/timestamp.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Git Auto Commit (Linode)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '[BOT] [Linode] changes - ${{ steps.linode-extract-timestamp.outputs.linode_utc }}'
+          push_options: '--force'
+
+      ##################################################################################################################################
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
