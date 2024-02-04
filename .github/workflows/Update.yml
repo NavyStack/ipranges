@@ -18,6 +18,21 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
+      - name: Run Google Script
+        run: |
+          chmod +x ./google/start.sh
+          ./google/start.sh
+
+      - name: Extract Timestamp from File (Google)
+        id: google-extract-timestamp
+        run: echo "google_utc=$(<./google/timestamp.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Git Auto Commit (Google)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '[BOT] [Google] changes - ${{ steps.google-extract-timestamp.outputs.google_utc }}'
+          push_options: '--force'
+
       - name: Run Googlebot Script
         run: |
           chmod +x ./googlebot/start.sh
