@@ -150,7 +150,7 @@ jobs:
       - name: Git Auto Commit (Vultr)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: '[BOT] [Vultr] changes - ${{ steps.vultr-extract-timestamp.outputs.vultr_utc }}'
+          commit_message: '[BOT] [Vultr] changes'
           push_options: '--force'
 
       - name: Run Linode Script
