@@ -7,7 +7,7 @@ set -x
 
 # Define file paths
 json_file="/tmp/vultr.json"
-timestamp_file="vultr/timestamp.txt"
+# timestamp_file="vultr/timestamp.txt"
 combined_file="/tmp/vultr-combined.txt"
 ipv4_output="vultr/ipv4.txt"
 ipv6_output="vultr/ipv6.txt"
@@ -21,10 +21,10 @@ else
 fi
 
 # Extract "updated" timestamp value
-updated_timestamp=$(jq -r '.updated' "$json_file")
+# updated_timestamp=$(jq -r '.updated' "$json_file")
 
 # Save "updated" timestamp value to file
-echo "$updated_timestamp" > "$timestamp_file"
+# echo "$updated_timestamp" > "$timestamp_file"
 
 # save ipv4 and ipv6 combined
 jq '.subnets[] | select(.ip_prefix != null) | .ip_prefix' -r "$json_file" > "$combined_file"
