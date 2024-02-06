@@ -1,14 +1,18 @@
 import { merge } from 'cidr-tools';
 import { promises as fs } from 'fs';
 import path from 'path';
+// Check if the application is running in development mode
 const debugMode = process.env.NODE_ENV === 'development';
+// Log a message if debug mode is enabled
 const logMessage = ({ outputRelativePath, sourceFilePath }) => {
     debugMode &&
         console.log(`File "${outputRelativePath}" created with merged CIDR addresses from "${sourceFilePath}".`);
 };
+// Log an error message
 const logError = (message, error) => {
     console.error(`Error: ${message}`, error?.message || error);
 };
+// Asynchronously read the content of a file
 const readFile = async ({ filePath }) => {
     try {
         const content = await fs.readFile(filePath, 'utf-8');
@@ -19,6 +23,7 @@ const readFile = async ({ filePath }) => {
         throw error;
     }
 };
+// Asynchronously write content to a file
 const writeFile = async ({ filePath, content }) => {
     try {
         await fs.writeFile(filePath, content.join('\n'));
@@ -28,6 +33,7 @@ const writeFile = async ({ filePath, content }) => {
         throw error;
     }
 };
+// Asynchronously merge CIDR addresses
 const mergeAddresses = async (addresses) => {
     try {
         const mergedAddresses = await Promise.resolve(merge(addresses));
@@ -38,6 +44,7 @@ const mergeAddresses = async (addresses) => {
         throw error;
     }
 };
+// Process a single file asynchronously
 const processFile = async ({ sourceFilePath, outputSuffix }) => {
     try {
         const addresses = await readFile({ filePath: sourceFilePath });
@@ -52,10 +59,12 @@ const processFile = async ({ sourceFilePath, outputSuffix }) => {
         throw error;
     }
 };
+// Generate the output path for a file
 const generateOutputPath = (sourceFilePath, outputSuffix) => {
     const baseName = path.basename(sourceFilePath, path.extname(sourceFilePath));
     return path.join(path.dirname(sourceFilePath), `${baseName}${outputSuffix}${path.extname(sourceFilePath)}`);
 };
+// Asynchronously get files recursively from a directory
 const getFileRecursively = async function* (dir) {
     try {
         const files = await fs.readdir(dir);
@@ -75,12 +84,15 @@ const getFileRecursively = async function* (dir) {
         throw error;
     }
 };
+// Process multiple files asynchronously
 const processFiles = async ({ filesToProcess, outputSuffix, processFunction }) => {
     try {
         const filesFound = [];
+        // Iterate over files recursively in the current directory
         for await (const file of getFileRecursively(process.cwd())) {
             filesFound.push(file);
         }
+        // Process each file in parallel
         const processResults = await Promise.all(filesToProcess.map(async (fileName) => {
             const sourceFilePaths = filesFound.filter((file) => file.toLowerCase().endsWith(fileName.toLowerCase()));
             if (sourceFilePaths.length === 0) {
@@ -97,12 +109,16 @@ const processFiles = async ({ filesToProcess, outputSuffix, processFunction }) =
         return [];
     }
 };
+// Extract file paths from command line arguments
 const filesToProcess = process.argv.slice(3);
+// Map of process options
 const processOptionsMap = {
     '-m': { outputSuffix: '_mini', processFunction: processFile },
     '-c': { outputSuffix: '_comma', processFunction: processFile }
 };
+// Get the process option from command line arguments
 const processOption = process.argv[2];
+// Execute file processing based on the process option
 if (processOptionsMap[processOption] && filesToProcess.length >= 1) {
     const { outputSuffix, processFunction } = processOptionsMap[processOption];
     processFiles({ filesToProcess, outputSuffix, processFunction })
