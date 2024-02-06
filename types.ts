@@ -1,6 +1,5 @@
-export interface FileProcessingParams {
-  sourceFilePath: string
-  outputSuffix: string
+export interface FileOperationParams {
+  filePath: string
 }
 
 export interface LogParams {
@@ -8,6 +7,15 @@ export interface LogParams {
   sourceFilePath: string
 }
 
-export interface FileOperationParams {
-  filePath: string
+export interface FileProcessingParams {
+  sourceFilePath: string
+  outputSuffix: string
+}
+
+export type FileProcessFunction = (
+  params: FileProcessingParams
+) => Promise<string>
+
+export interface AddressMergeResult {
+  mergedAddresses: string[]
 }

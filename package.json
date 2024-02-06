@@ -5,7 +5,9 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "build": "tsc && node main.js ipv4.txt ipv6.txt",
+    "build": "tsc && node main.js -m ipv4.txt ipv6.txt && node main.js -c ipv4.txt ipv6.txt",
+    "build-m": "tsc && node main.js -m ipv4.txt ipv6.txt",
+    "build-c": "tsc && node main.js -c ipv4.txt ipv6.txt",
     "t1": "prettier -w . && eslint .",
     "t2": "NODE_ENV=development node main.js ipv4.txt ipv6.txt"
   },

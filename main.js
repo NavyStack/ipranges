@@ -2,7 +2,6 @@ import { merge } from 'cidr-tools';
 import { promises as fs } from 'fs';
 import path from 'path';
 const debugMode = process.env.NODE_ENV === 'development';
-const outputSuffix = '_mini';
 const logMessage = ({ outputRelativePath, sourceFilePath }) => {
     debugMode &&
         console.log(`File "${outputRelativePath}" created with merged CIDR addresses from "${sourceFilePath}".`);
@@ -29,10 +28,10 @@ const writeFile = async ({ filePath, content }) => {
         throw error;
     }
 };
-const mergeAddresses = (addresses) => {
+const mergeAddresses = async (addresses) => {
     try {
-        const mergedAddresses = merge(addresses);
-        return Promise.resolve(mergedAddresses);
+        const mergedAddresses = await Promise.resolve(merge(addresses));
+        return { mergedAddresses };
     }
     catch (error) {
         logError('merging addresses', error);
@@ -41,13 +40,10 @@ const mergeAddresses = (addresses) => {
 };
 const processFile = async ({ sourceFilePath, outputSuffix }) => {
     try {
-        const inputAddresses = await readFile({ filePath: sourceFilePath });
-        const mergedAddresses = await mergeAddresses(inputAddresses);
-        const baseName = path.basename(sourceFilePath, path.extname(sourceFilePath));
-        const outputFileName = `${baseName}${outputSuffix}${path.extname(sourceFilePath)}`;
-        const outputRelativePath = path.join(path.dirname(sourceFilePath), outputFileName);
-        const outputPath = path.resolve(outputRelativePath);
-        await writeFile({ filePath: outputPath, content: mergedAddresses });
+        const addresses = await readFile({ filePath: sourceFilePath });
+        const { mergedAddresses } = await mergeAddresses(addresses);
+        const outputRelativePath = generateOutputPath(sourceFilePath, outputSuffix);
+        await writeFile({ filePath: outputRelativePath, content: mergedAddresses });
         logMessage({ outputRelativePath, sourceFilePath });
         return outputRelativePath;
     }
@@ -56,14 +52,18 @@ const processFile = async ({ sourceFilePath, outputSuffix }) => {
         throw error;
     }
 };
-const findFilesRecursively = async function* (dir) {
+const generateOutputPath = (sourceFilePath, outputSuffix) => {
+    const baseName = path.basename(sourceFilePath, path.extname(sourceFilePath));
+    return path.join(path.dirname(sourceFilePath), `${baseName}${outputSuffix}${path.extname(sourceFilePath)}`);
+};
+const getFileRecursively = async function* (dir) {
     try {
         const files = await fs.readdir(dir);
         for (const file of files) {
             const filePath = path.join(dir, file);
             const stats = await fs.stat(filePath);
             if (stats.isDirectory()) {
-                yield* findFilesRecursively(filePath);
+                yield* getFileRecursively(filePath);
             }
             else {
                 yield filePath;
@@ -75,35 +75,40 @@ const findFilesRecursively = async function* (dir) {
         throw error;
     }
 };
-const processFiles = async ({ filesToProcess }) => {
+const processFiles = async ({ filesToProcess, outputSuffix, processFunction }) => {
     try {
         const filesFound = [];
-        for await (const file of findFilesRecursively(process.cwd())) {
+        for await (const file of getFileRecursively(process.cwd())) {
             filesFound.push(file);
         }
-        const results = await Promise.all(filesToProcess.map(async (fileName) => {
+        const processResults = await Promise.all(filesToProcess.map(async (fileName) => {
             const sourceFilePaths = filesFound.filter((file) => file.toLowerCase().endsWith(fileName.toLowerCase()));
             if (sourceFilePaths.length === 0) {
                 console.error(`File "${fileName}" not found in the current directory or its subdirectories.`);
                 return [];
             }
-            const processFileResults = await Promise.all(sourceFilePaths.map(async (sourceFilePath) => processFile({ sourceFilePath, outputSuffix })));
-            const flattenedResults = processFileResults
-                .map((result) => (result ? result : []))
-                .flat();
-            return flattenedResults;
+            const promises = sourceFilePaths.map(async (sourceFilePath) => processFunction({ sourceFilePath, outputSuffix }));
+            return await Promise.all(promises);
         }));
-        const finalResults = results
-            .flat()
-            .filter((result) => result !== null && result !== undefined);
-        return finalResults;
+        return processResults.flat().filter(Boolean);
     }
     catch (error) {
         logError(`processing files`, error);
         return [];
     }
 };
-const filesToProcess = process.argv.slice(2);
-processFiles({ filesToProcess })
-    .then((result) => console.log('All files processed successfully:', result))
-    .catch((error) => console.error('Error during file processing:', error));
+const filesToProcess = process.argv.slice(3);
+const processOptionsMap = {
+    '-m': { outputSuffix: '_mini', processFunction: processFile },
+    '-c': { outputSuffix: '_comma', processFunction: processFile }
+};
+const processOption = process.argv[2];
+if (processOptionsMap[processOption] && filesToProcess.length >= 1) {
+    const { outputSuffix, processFunction } = processOptionsMap[processOption];
+    processFiles({ filesToProcess, outputSuffix, processFunction })
+        .then((result) => console.log('All files processed successfully:', result))
+        .catch((error) => console.error('Error during file processing:', error));
+}
+else {
+    console.error('Invalid command. Please use: tsc && node main.js [-m | -c] file1.txt [file2.txt ...]');
+}
