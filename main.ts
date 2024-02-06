@@ -1,17 +1,12 @@
 import { merge } from 'cidr-tools'
 import { promises as fs } from 'fs'
 import path from 'path'
-import {
-  FileOperationParams,
-  LogParams,
-  FileProcessFunction,
-  AddressMergeResult
-} from 'types'
+import { FileOperationParams, LogParams, FileProcessFunction } from 'types'
 
-// Check if the application is running in development mode
+// Check if the environment is set to development mode
 const debugMode = process.env.NODE_ENV === 'development'
 
-// Log a message if debug mode is enabled
+// Function to log messages if in debug mode
 const logMessage = ({
   outputRelativePath,
   sourceFilePath
@@ -22,12 +17,12 @@ const logMessage = ({
     )
 }
 
-// Log an error message
+// Function to log errors
 const logError = (message: string, error?: Error): void => {
   console.error(`Error: ${message}`, (error as Error)?.message || error)
 }
 
-// Asynchronously read the content of a file
+// Function to read a file asynchronously
 const readFile = async ({
   filePath
 }: FileOperationParams): Promise<string[]> => {
@@ -40,7 +35,7 @@ const readFile = async ({
   }
 }
 
-// Asynchronously write content to a file
+// Function to write to a file asynchronously
 const writeFile = async ({
   filePath,
   content
@@ -53,27 +48,26 @@ const writeFile = async ({
   }
 }
 
-// Asynchronously merge CIDR addresses
-const mergeAddresses = async (
-  addresses: string[]
-): Promise<AddressMergeResult> => {
+// Function to merge CIDR addresses
+const mergeAddresses = (addresses: string[]): Promise<string[]> => {
   try {
-    const mergedAddresses = await Promise.resolve(merge(addresses))
-    return { mergedAddresses }
+    const mergedAddresses = merge(addresses)
+    return Promise.resolve(mergedAddresses)
   } catch (error: unknown) {
     logError('merging addresses', error as Error)
     throw error
   }
 }
 
-// Process a single file asynchronously
+// Function to process a single file
 const processFile: FileProcessFunction = async ({
   sourceFilePath,
   outputSuffix
 }) => {
   try {
-    const addresses = await readFile({ filePath: sourceFilePath })
-    const { mergedAddresses } = await mergeAddresses(addresses)
+    const mergedAddresses = await mergeAddresses(
+      await readFile({ filePath: sourceFilePath })
+    )
     const outputRelativePath = generateOutputPath(sourceFilePath, outputSuffix)
     await writeFile({ filePath: outputRelativePath, content: mergedAddresses })
     logMessage({ outputRelativePath, sourceFilePath })
@@ -84,7 +78,31 @@ const processFile: FileProcessFunction = async ({
   }
 }
 
-// Generate the output path for a file
+// Function to process a single file and separate addresses with commas
+const processFileWithComma: FileProcessFunction = async ({
+  sourceFilePath,
+  outputSuffix
+}) => {
+  try {
+    const mergedAddresses = await mergeAddresses(
+      await readFile({ filePath: sourceFilePath })
+    )
+    const outputRelativePath = generateOutputPath(sourceFilePath, outputSuffix)
+    // Join addresses with commas
+    const addressesWithComma = mergedAddresses.join(',')
+    await writeFile({
+      filePath: outputRelativePath,
+      content: [addressesWithComma]
+    }) // Write addresses as a single line with commas
+    logMessage({ outputRelativePath, sourceFilePath })
+    return outputRelativePath
+  } catch (error: unknown) {
+    logError(`processing file "${sourceFilePath}"`, error as Error)
+    throw error
+  }
+}
+
+// Function to generate the output path for a file
 const generateOutputPath = (
   sourceFilePath: string,
   outputSuffix: string
@@ -96,17 +114,15 @@ const generateOutputPath = (
   )
 }
 
-// Asynchronously get files recursively from a directory
-const getFileRecursively = async function* (
-  dir: string
-): AsyncGenerator<string> {
+// Asynchronous generator function to recursively iterate through directories
+const Recursively = async function* (dir: string): AsyncGenerator<string> {
   try {
     const files = await fs.readdir(dir)
     for (const file of files) {
       const filePath = path.join(dir, file)
       const stats = await fs.stat(filePath)
       if (stats.isDirectory()) {
-        yield* getFileRecursively(filePath)
+        yield* Recursively(filePath)
       } else {
         yield filePath
       }
@@ -117,7 +133,7 @@ const getFileRecursively = async function* (
   }
 }
 
-// Process multiple files asynchronously
+// Function to process multiple files
 const processFiles = async ({
   filesToProcess,
   outputSuffix,
@@ -129,12 +145,10 @@ const processFiles = async ({
 }): Promise<string[]> => {
   try {
     const filesFound: string[] = []
-    // Iterate over files recursively in the current directory
-    for await (const file of getFileRecursively(process.cwd())) {
+    for await (const file of Recursively(process.cwd())) {
       filesFound.push(file)
     }
 
-    // Process each file in parallel
     const processResults = await Promise.all(
       filesToProcess.map(async (fileName) => {
         const sourceFilePaths = filesFound.filter((file) =>
@@ -148,11 +162,11 @@ const processFiles = async ({
           return []
         }
 
-        const promises = sourceFilePaths.map(async (sourceFilePath) =>
-          processFunction({ sourceFilePath, outputSuffix })
+        return await Promise.all(
+          sourceFilePaths.map(async (sourceFilePath) =>
+            processFunction({ sourceFilePath, outputSuffix })
+          )
         )
-
-        return await Promise.all(promises)
       })
     )
 
@@ -163,22 +177,22 @@ const processFiles = async ({
   }
 }
 
-// Extract file paths from command line arguments
+// Extract files to process from command line arguments
 const filesToProcess = process.argv.slice(3)
 
-// Map of process options
+// Map of process options and their corresponding output suffix and process function
 const processOptionsMap: Record<
   string,
   { outputSuffix: string; processFunction: FileProcessFunction }
 > = {
   '-m': { outputSuffix: '_mini', processFunction: processFile },
-  '-c': { outputSuffix: '_comma', processFunction: processFile }
+  '-c': { outputSuffix: '_comma', processFunction: processFileWithComma } // Use processFileWithComma for -c option
 }
 
-// Get the process option from command line arguments
+// Extract the process option from command line arguments
 const processOption = process.argv[2]
 
-// Execute file processing based on the process option
+// If a valid process option and at least one file to process are provided
 if (processOptionsMap[processOption] && filesToProcess.length >= 1) {
   const { outputSuffix, processFunction } = processOptionsMap[processOption]
   processFiles({ filesToProcess, outputSuffix, processFunction })
