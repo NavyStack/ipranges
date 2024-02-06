@@ -75,6 +75,9 @@ const findFilesRecursively = async function* (dir) {
         throw error;
     }
 };
+const filterFilesByName = (files, fileName) => {
+    return files.filter((file) => file.toLowerCase().endsWith(fileName.toLowerCase()));
+};
 const processFiles = async (filesToProcess) => {
     try {
         const filesFound = [];
@@ -82,21 +85,20 @@ const processFiles = async (filesToProcess) => {
             filesFound.push(file);
         }
         const results = await Promise.allSettled(filesToProcess.map(async (fileName) => {
-            const sourceFilePaths = filesFound.filter((file) => file.toLowerCase().endsWith(fileName.toLowerCase()));
+            const sourceFilePaths = filterFilesByName(filesFound, fileName);
             if (sourceFilePaths.length === 0) {
                 console.error(`File "${fileName}" not found in the current directory or its subdirectories.`);
                 return null;
             }
             const processFileResults = await Promise.allSettled(sourceFilePaths.map(async (sourceFilePath) => processFile(sourceFilePath, outputSuffix)));
             const flattenedResults = processFileResults
-                .map((result) => result.status === 'fulfilled' ? result.value : null)
-                .filter((result) => result !== null);
+                .filter((result) => result.status === 'fulfilled')
+                .map((result) => result.value);
             return flattenedResults;
         }));
         const finalResults = results
-            .map((result) => (result.status === 'fulfilled' ? result.value : null))
-            .flat()
-            .filter((result) => result !== null);
+            .filter((result) => result.status === 'fulfilled')
+            .flatMap((result) => result.value);
         return finalResults;
     }
     catch (error) {

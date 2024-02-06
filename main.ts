@@ -97,6 +97,12 @@ const findFilesRecursively = async function* (
   }
 }
 
+const filterFilesByName = (files: string[], fileName: string): string[] => {
+  return files.filter((file) =>
+    file.toLowerCase().endsWith(fileName.toLowerCase())
+  )
+}
+
 const processFiles = async (filesToProcess: string[]): Promise<string[]> => {
   try {
     const filesFound: string[] = []
@@ -107,9 +113,7 @@ const processFiles = async (filesToProcess: string[]): Promise<string[]> => {
 
     const results = await Promise.allSettled(
       filesToProcess.map(async (fileName) => {
-        const sourceFilePaths = filesFound.filter((file) =>
-          file.toLowerCase().endsWith(fileName.toLowerCase())
-        )
+        const sourceFilePaths = filterFilesByName(filesFound, fileName)
 
         if (sourceFilePaths.length === 0) {
           console.error(
@@ -125,19 +129,22 @@ const processFiles = async (filesToProcess: string[]): Promise<string[]> => {
         )
 
         const flattenedResults = processFileResults
-          .map((result) =>
-            result.status === 'fulfilled' ? result.value : null
+          .filter(
+            (result): result is PromiseFulfilledResult<string | null> =>
+              result.status === 'fulfilled'
           )
-          .filter((result) => result !== null) as string[]
+          .map((result) => result.value)
 
         return flattenedResults
       })
     )
 
     const finalResults = results
-      .map((result) => (result.status === 'fulfilled' ? result.value : null))
-      .flat()
-      .filter((result) => result !== null) as string[]
+      .filter(
+        (result): result is PromiseFulfilledResult<string[]> =>
+          result.status === 'fulfilled'
+      )
+      .flatMap((result) => result.value)
 
     return finalResults
   } catch (error: unknown) {
