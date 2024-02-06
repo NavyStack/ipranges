@@ -1,14 +1,15 @@
 import { merge } from 'cidr-tools'
 import { promises as fs } from 'fs'
+import { FileProcessingParams, LogParams, FileOperationParams } from './types'
 import path from 'path'
 
 const debugMode = process.env.NODE_ENV === 'development'
 const outputSuffix = '_mini'
 
-const logMessage = (
-  outputRelativePath: string,
-  sourceFilePath: string
-): void => {
+const logMessage = ({
+  outputRelativePath,
+  sourceFilePath
+}: LogParams): void => {
   debugMode &&
     console.log(
       `File "${outputRelativePath}" created with merged CIDR addresses from "${sourceFilePath}".`
@@ -19,7 +20,9 @@ const logError = (message: string, error?: Error): void => {
   console.error(`Error: ${message}`, (error as Error)?.message || error)
 }
 
-const readAddressesFromFile = async (filePath: string): Promise<string[]> => {
+const readFile = async ({
+  filePath
+}: FileOperationParams): Promise<string[]> => {
   try {
     const content = await fs.readFile(filePath, 'utf-8')
     return content.trim().split('\n')
@@ -29,14 +32,14 @@ const readAddressesFromFile = async (filePath: string): Promise<string[]> => {
   }
 }
 
-const writeAddressesToFile = async (
-  outputPath: string,
-  addresses: string[]
-): Promise<void> => {
+const writeFile = async ({
+  filePath,
+  content
+}: FileOperationParams & { content: string[] }): Promise<void> => {
   try {
-    await fs.writeFile(outputPath, addresses.join('\n'))
+    await fs.writeFile(filePath, content.join('\n'))
   } catch (error: unknown) {
-    logError(`writing to file "${outputPath}"`, error as Error)
+    logError(`writing to file "${filePath}"`, error as Error)
     throw error
   }
 }
@@ -47,16 +50,16 @@ const mergeAddresses = (addresses: string[]): Promise<string[]> => {
     return Promise.resolve(mergedAddresses)
   } catch (error: unknown) {
     logError('merging addresses', error as Error)
-    return Promise.reject(error)
+    throw error
   }
 }
 
-const processFile = async (
-  sourceFilePath: string,
-  outputSuffix: string
-): Promise<string | null> => {
+const processFile = async ({
+  sourceFilePath,
+  outputSuffix
+}: FileProcessingParams): Promise<string> => {
   try {
-    const inputAddresses = await readAddressesFromFile(sourceFilePath)
+    const inputAddresses = await readFile({ filePath: sourceFilePath })
     const mergedAddresses = await mergeAddresses(inputAddresses)
 
     const baseName = path.basename(sourceFilePath, path.extname(sourceFilePath))
@@ -66,14 +69,12 @@ const processFile = async (
       outputFileName
     )
     const outputPath = path.resolve(outputRelativePath)
-
-    await writeAddressesToFile(outputPath, mergedAddresses)
-    logMessage(outputRelativePath, sourceFilePath)
-
+    await writeFile({ filePath: outputPath, content: mergedAddresses })
+    logMessage({ outputRelativePath, sourceFilePath })
     return outputRelativePath
   } catch (error: unknown) {
     logError(`processing file "${sourceFilePath}"`, error as Error)
-    return null
+    throw error
   }
 }
 
@@ -97,55 +98,46 @@ const findFilesRecursively = async function* (
   }
 }
 
-const filterFilesByName = (files: string[], fileName: string): string[] => {
-  return files.filter((file) =>
-    file.toLowerCase().endsWith(fileName.toLowerCase())
-  )
-}
-
-const processFiles = async (filesToProcess: string[]): Promise<string[]> => {
+const processFiles = async ({
+  filesToProcess
+}: {
+  filesToProcess: string[]
+}): Promise<string[]> => {
   try {
     const filesFound: string[] = []
-
     for await (const file of findFilesRecursively(process.cwd())) {
       filesFound.push(file)
     }
 
-    const results = await Promise.allSettled(
+    const results = await Promise.all(
       filesToProcess.map(async (fileName) => {
-        const sourceFilePaths = filterFilesByName(filesFound, fileName)
+        const sourceFilePaths = filesFound.filter((file) =>
+          file.toLowerCase().endsWith(fileName.toLowerCase())
+        )
 
         if (sourceFilePaths.length === 0) {
           console.error(
             `File "${fileName}" not found in the current directory or its subdirectories.`
           )
-          return null
+          return []
         }
 
-        const processFileResults = await Promise.allSettled(
+        const processFileResults = await Promise.all(
           sourceFilePaths.map(async (sourceFilePath) =>
-            processFile(sourceFilePath, outputSuffix)
+            processFile({ sourceFilePath, outputSuffix })
           )
         )
 
         const flattenedResults = processFileResults
-          .filter(
-            (result): result is PromiseFulfilledResult<string | null> =>
-              result.status === 'fulfilled'
-          )
-          .map((result) => result.value)
-
+          .map((result) => (result ? result : []))
+          .flat()
         return flattenedResults
       })
     )
 
     const finalResults = results
-      .filter(
-        (result): result is PromiseFulfilledResult<string[]> =>
-          result.status === 'fulfilled'
-      )
-      .flatMap((result) => result.value)
-
+      .flat()
+      .filter((result) => result !== null && result !== undefined)
     return finalResults
   } catch (error: unknown) {
     logError(`processing files`, error as Error)
@@ -155,7 +147,7 @@ const processFiles = async (filesToProcess: string[]): Promise<string[]> => {
 
 const filesToProcess = process.argv.slice(2)
 
-processFiles(filesToProcess)
+processFiles({ filesToProcess })
   .then((result) => console.log('All files processed successfully:', result))
   .catch((error: unknown) =>
     console.error('Error during file processing:', error as Error)

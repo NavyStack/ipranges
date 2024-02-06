@@ -3,14 +3,14 @@ import { promises as fs } from 'fs';
 import path from 'path';
 const debugMode = process.env.NODE_ENV === 'development';
 const outputSuffix = '_mini';
-const logMessage = (outputRelativePath, sourceFilePath) => {
+const logMessage = ({ outputRelativePath, sourceFilePath }) => {
     debugMode &&
         console.log(`File "${outputRelativePath}" created with merged CIDR addresses from "${sourceFilePath}".`);
 };
 const logError = (message, error) => {
     console.error(`Error: ${message}`, error?.message || error);
 };
-const readAddressesFromFile = async (filePath) => {
+const readFile = async ({ filePath }) => {
     try {
         const content = await fs.readFile(filePath, 'utf-8');
         return content.trim().split('\n');
@@ -20,12 +20,12 @@ const readAddressesFromFile = async (filePath) => {
         throw error;
     }
 };
-const writeAddressesToFile = async (outputPath, addresses) => {
+const writeFile = async ({ filePath, content }) => {
     try {
-        await fs.writeFile(outputPath, addresses.join('\n'));
+        await fs.writeFile(filePath, content.join('\n'));
     }
     catch (error) {
-        logError(`writing to file "${outputPath}"`, error);
+        logError(`writing to file "${filePath}"`, error);
         throw error;
     }
 };
@@ -36,24 +36,24 @@ const mergeAddresses = (addresses) => {
     }
     catch (error) {
         logError('merging addresses', error);
-        return Promise.reject(error);
+        throw error;
     }
 };
-const processFile = async (sourceFilePath, outputSuffix) => {
+const processFile = async ({ sourceFilePath, outputSuffix }) => {
     try {
-        const inputAddresses = await readAddressesFromFile(sourceFilePath);
+        const inputAddresses = await readFile({ filePath: sourceFilePath });
         const mergedAddresses = await mergeAddresses(inputAddresses);
         const baseName = path.basename(sourceFilePath, path.extname(sourceFilePath));
         const outputFileName = `${baseName}${outputSuffix}${path.extname(sourceFilePath)}`;
         const outputRelativePath = path.join(path.dirname(sourceFilePath), outputFileName);
         const outputPath = path.resolve(outputRelativePath);
-        await writeAddressesToFile(outputPath, mergedAddresses);
-        logMessage(outputRelativePath, sourceFilePath);
+        await writeFile({ filePath: outputPath, content: mergedAddresses });
+        logMessage({ outputRelativePath, sourceFilePath });
         return outputRelativePath;
     }
     catch (error) {
         logError(`processing file "${sourceFilePath}"`, error);
-        return null;
+        throw error;
     }
 };
 const findFilesRecursively = async function* (dir) {
@@ -75,30 +75,27 @@ const findFilesRecursively = async function* (dir) {
         throw error;
     }
 };
-const filterFilesByName = (files, fileName) => {
-    return files.filter((file) => file.toLowerCase().endsWith(fileName.toLowerCase()));
-};
-const processFiles = async (filesToProcess) => {
+const processFiles = async ({ filesToProcess }) => {
     try {
         const filesFound = [];
         for await (const file of findFilesRecursively(process.cwd())) {
             filesFound.push(file);
         }
-        const results = await Promise.allSettled(filesToProcess.map(async (fileName) => {
-            const sourceFilePaths = filterFilesByName(filesFound, fileName);
+        const results = await Promise.all(filesToProcess.map(async (fileName) => {
+            const sourceFilePaths = filesFound.filter((file) => file.toLowerCase().endsWith(fileName.toLowerCase()));
             if (sourceFilePaths.length === 0) {
                 console.error(`File "${fileName}" not found in the current directory or its subdirectories.`);
-                return null;
+                return [];
             }
-            const processFileResults = await Promise.allSettled(sourceFilePaths.map(async (sourceFilePath) => processFile(sourceFilePath, outputSuffix)));
+            const processFileResults = await Promise.all(sourceFilePaths.map(async (sourceFilePath) => processFile({ sourceFilePath, outputSuffix })));
             const flattenedResults = processFileResults
-                .filter((result) => result.status === 'fulfilled')
-                .map((result) => result.value);
+                .map((result) => (result ? result : []))
+                .flat();
             return flattenedResults;
         }));
         const finalResults = results
-            .filter((result) => result.status === 'fulfilled')
-            .flatMap((result) => result.value);
+            .flat()
+            .filter((result) => result !== null && result !== undefined);
         return finalResults;
     }
     catch (error) {
@@ -107,6 +104,6 @@ const processFiles = async (filesToProcess) => {
     }
 };
 const filesToProcess = process.argv.slice(2);
-processFiles(filesToProcess)
+processFiles({ filesToProcess })
     .then((result) => console.log('All files processed successfully:', result))
     .catch((error) => console.error('Error during file processing:', error));
