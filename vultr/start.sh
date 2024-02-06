@@ -14,10 +14,10 @@ ipv6_output="vultr/ipv6.txt"
 
 # get from public ranges
 if curl -s https://geofeed.constant.com/?json > "$json_file"; then
-    echo "Vultr IP ranges fetched successfully."
+  echo "Vultr IP ranges fetched successfully."
 else
-    echo "Error: Failed to fetch Vultr IP ranges." >&2
-    exit 1
+  echo "Error: Failed to fetch Vultr IP ranges." >&2
+  exit 1
 fi
 
 # Extract "updated" timestamp value
@@ -35,17 +35,17 @@ grep -E '^[0-9a-fA-F:]+/[0-9]+$' "$combined_file" > "$ipv6_output"
 
 # sort & uniq
 if sort -V "$ipv4_output" | uniq > "$ipv4_output.tmp" && mv "$ipv4_output.tmp" "$ipv4_output"; then
-    echo "Vultr IPv4 addresses sorted and duplicates removed successfully."
+  echo "Vultr IPv4 addresses sorted and duplicates removed successfully."
 else
-    echo "Error: Failed to sort Vultr IPv4 addresses." >&2
-    exit 1
+  echo "Error: Failed to sort Vultr IPv4 addresses." >&2
+  exit 1
 fi
 
 if sort -V "$ipv6_output" | uniq > "$ipv6_output.tmp" && mv "$ipv6_output.tmp" "$ipv6_output"; then
-    echo "Vultr IPv6 addresses sorted and duplicates removed successfully."
+  echo "Vultr IPv6 addresses sorted and duplicates removed successfully."
 else
-    echo "Error: Failed to sort Vultr IPv6 addresses." >&2
-    exit 1
+  echo "Error: Failed to sort Vultr IPv6 addresses." >&2
+  exit 1
 fi
 
 # Clean up temporary files
