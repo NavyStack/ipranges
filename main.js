@@ -44,14 +44,12 @@ const mergeAddresses = (addresses) => {
         throw error;
     }
 };
-// Function to process a single file and separate addresses with commas
-const processFileWithComma = async ({ sourceFilePath, outputSuffix }) => {
+// Function to process a single file
+const processFile = async ({ sourceFilePath, outputSuffix }) => {
     try {
         const mergedAddresses = await mergeAddresses(await readFile({ filePath: sourceFilePath }));
         const outputRelativePath = generateOutputPath(sourceFilePath, outputSuffix);
-        // Join addresses with commas
-        const addressesWithComma = mergedAddresses.join(',');
-        await writeFile({ filePath: outputRelativePath, content: [addressesWithComma] }); // Write addresses as a single line with commas
+        await writeFile({ filePath: outputRelativePath, content: mergedAddresses });
         logMessage({ outputRelativePath, sourceFilePath });
         return outputRelativePath;
     }
@@ -60,12 +58,17 @@ const processFileWithComma = async ({ sourceFilePath, outputSuffix }) => {
         throw error;
     }
 };
-// Function to process a single file
-const processFile = async ({ sourceFilePath, outputSuffix }) => {
+// Function to process a single file and separate addresses with commas
+const processFileWithComma = async ({ sourceFilePath, outputSuffix }) => {
     try {
         const mergedAddresses = await mergeAddresses(await readFile({ filePath: sourceFilePath }));
         const outputRelativePath = generateOutputPath(sourceFilePath, outputSuffix);
-        await writeFile({ filePath: outputRelativePath, content: mergedAddresses });
+        // Join addresses with commas
+        const addressesWithComma = mergedAddresses.join(',');
+        await writeFile({
+            filePath: outputRelativePath,
+            content: [addressesWithComma]
+        }); // Write addresses as a single line with commas
         logMessage({ outputRelativePath, sourceFilePath });
         return outputRelativePath;
     }
