@@ -6,9 +6,15 @@ This script simplifies the organization of publicly available IP addresses gathe
 
 ## How to Use:
 
-### Amazon
+0. Simply use text files and links in this repositry
+1. Customize the filesToProcess array with the names of the files you want to process.
+2. Save your IP address lists in text files (.txt).
+3. Execute the script to recursively search for the specified files in the current directory and its subdirectories.
+4. The merged IP address lists will be saved in new files with the designated '\_mini' suffix.
 
-#### IPv4
+## Amazon
+
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/amazon/ipv4.txt
@@ -22,7 +28,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/amazon/ipv4_mini.txt
 https://raw.githubusercontent.com/NavyStack/ipranges/main/amazon/ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/amazon/ipv6.txt
@@ -36,9 +42,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/amazon/ipv6_mini.txt
 https://raw.githubusercontent.com/NavyStack/ipranges/main/amazon/ipv6_comma.txt
 ```
 
-### Bingbot
+## Bingbot
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/bingbot/ipv4.txt
@@ -52,9 +58,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/bingbot/ipv4_mini.txt
 https://raw.githubusercontent.com/NavyStack/ipranges/main/bingbot/ipv4_comma.txt
 ```
 
-### Cloudflare
+## Cloudflare
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/cloudflare/ipv4.txt
@@ -68,7 +74,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/cloudflare/ipv4_mini.t
 https://raw.githubusercontent.com/NavyStack/ipranges/main/cloudflare/ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/cloudflare/ipv6.txt
@@ -82,9 +88,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/cloudflare/ipv6_mini.t
 https://raw.githubusercontent.com/NavyStack/ipranges/main/cloudflare/ipv6_comma.txt
 ```
 
-### Digitalocean
+## Digitalocean
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/digitalocean/ipv4.txt
@@ -98,7 +104,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/digitalocean/ipv4_mini
 https://raw.githubusercontent.com/NavyStack/ipranges/main/digitalocean/ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/digitalocean/ipv6.txt
@@ -112,9 +118,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/digitalocean/ipv6_mini
 https://raw.githubusercontent.com/NavyStack/ipranges/main/digitalocean/ipv6_comma.txt
 ```
 
-### Github
+## Github
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/github/ipv4.txt
@@ -128,7 +134,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/github/ipv4_mini.txt
 https://raw.githubusercontent.com/NavyStack/ipranges/main/github/ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/github/ipv6.txt
@@ -142,9 +148,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/github/ipv6_mini.txt
 https://raw.githubusercontent.com/NavyStack/ipranges/main/github/ipv6_comma.txt
 ```
 
-### Googlebot
+## Googlebot
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/googlebot/ipv4.txt
@@ -158,7 +164,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/googlebot/ipv4_mini.tx
 https://raw.githubusercontent.com/NavyStack/ipranges/main/googlebot/ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/googlebot/ipv6.txt
@@ -172,9 +178,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/googlebot/ipv6_mini.tx
 https://raw.githubusercontent.com/NavyStack/ipranges/main/googlebot/ipv6_comma.txt
 ```
 
-### Google + Googlebot
+## Google + Googlebot
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/google/ipv4.txt
@@ -188,7 +194,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/google/ipv4_mini.txt
 https://raw.githubusercontent.com/NavyStack/ipranges/main/google/ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/google/ipv6.txt
@@ -202,9 +208,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/google/ipv6_mini.txt
 https://raw.githubusercontent.com/NavyStack/ipranges/main/google/ipv6_comma.txt
 ```
 
-### Linode
+## Linode
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/linode/ipv4.txt
@@ -218,7 +224,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/linode/ipv4_mini.txt
 https://raw.githubusercontent.com/NavyStack/ipranges/main/linode/ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/linode/ipv6.txt
@@ -232,9 +238,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/linode/ipv6_mini.txt
 https://raw.githubusercontent.com/NavyStack/ipranges/main/linode/ipv6_comma.txt
 ```
 
-### Microsoft-Azure (ALL)
+## Microsoft-Azure (ALL)
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/all_ipv4.txt
@@ -248,7 +254,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/all_ip
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/all_ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/all_ipv6.txt
@@ -262,9 +268,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/all_ip
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/all_ipv6_comma.txt
 ```
 
-### Microsoft-Azure (China)
+## Microsoft-Azure (China)
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/china/ipv4.txt
@@ -278,7 +284,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/china/
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/china/ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/china/ipv6.txt
@@ -292,9 +298,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/china/
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/china/ipv6_comma.txt
 ```
 
-### Microsoft-Azure (Germany)
+## Microsoft-Azure (Germany)
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/germany/ipv4.txt
@@ -308,7 +314,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/german
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/germany/ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/germany/ipv6.txt
@@ -322,9 +328,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/german
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/germany/ipv6_comma.txt
 ```
 
-### Microsoft-Azure (Public Cloud Only)
+## Microsoft-Azure (Public Cloud Only)
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/public-cloud/ipv4.txt
@@ -338,7 +344,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/public
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/public-cloud/ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/public-cloud/ipv6.txt
@@ -352,9 +358,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/public
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/public-cloud/ipv6_comma.txt
 ```
 
-### Microsoft-Azure (US GOV)
+## Microsoft-Azure (US GOV)
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/us-gov/ipv4.txt
@@ -368,7 +374,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/us-gov
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/us-gov/ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/us-gov/ipv6.txt
@@ -382,9 +388,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/us-gov
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/us-gov/ipv6_comma.txt
 ```
 
-### ORACLE (Oracle Cloud Infrastructure(OCI))
+## ORACLE (Oracle Cloud Infrastructure(OCI))
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/oracle/ipv4.txt
@@ -398,9 +404,9 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/oracle/ipv4_mini.txt
 https://raw.githubusercontent.com/NavyStack/ipranges/main/oracle/ipv4_comma.txt
 ```
 
-### Vultr
+## Vultr
 
-#### IPv4
+### IPv4
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv4.txt
@@ -414,7 +420,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv4_mini.txt
 https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv4_comma.txt
 ```
 
-#### IPv6
+### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv6.txt
@@ -427,17 +433,6 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv6_mini.txt
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv6_comma.txt
 ```
-
-0. Simply use text files in this repositry
-1. Customize the filesToProcess array with the names of the files you want to process.
-2. Save your IP address lists in text files (.txt).
-3. Execute the script to recursively search for the specified files in the current directory and its subdirectories.
-4. The merged IP address lists will be saved in new files with the designated '\_mini' suffix.
-
-### Additional Instructions:
-
-- If processing different sets of files is necessary, modify the filesToProcess array accordingly.
-- Ensure that the desired text files are in the current directory or its subdirectories.
 
 ## Important Note:
 
