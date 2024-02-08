@@ -460,4 +460,6 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv6_comma.txt
 
 ## ETC.
 
-`find . -type f -name "*.txt" ! -name "timestamp.txt" -print | sort`
+```bash
+find . -type f -name "*.txt" ! -name "timestamp.txt" -print | sort
+```
