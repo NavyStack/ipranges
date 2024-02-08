@@ -445,7 +445,7 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv6_comma.txt
 
 ## Important Note:
 
-> [!WARNING]
+> [!CAUTION]
 > All IP lists utilized by this script are sourced from public sources.
 
 > [!TIP]
