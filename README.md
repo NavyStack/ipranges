@@ -2,7 +2,7 @@
 
 ## IP Address List Merger
 
-This script simplifies the organization of publicly available IP addresses gathered from various sources, consolidating and refining IP address ranges from specified text files. It creates an organized list in a clean format. Supported file extensions include .txt, and the resulting files are suffixed with '\_mini', '\_comma' .
+This script simplifies the organization of publicly available IP addresses gathered from various sources, consolidating and refining IP address ranges from specified text files. It creates an organized list in a clean format. Supported file extensions include .txt, and the resulting files are suffixed with `\_mini` or `\_comma` .
 
 ## How to Use:
 
@@ -10,7 +10,7 @@ This script simplifies the organization of publicly available IP addresses gathe
 1. Customize the filesToProcess array with the names of the files you want to process.
 2. Save your IP address lists in text files (.txt).
 3. Execute the script to recursively search for the specified files in the current directory and its subdirectories.
-4. The merged IP address lists will be saved in new files with the designated '\_mini' or '\_comma' suffix.
+4. The merged IP address lists will be saved in new files with the designated `\_mini` or `\_comma` suffix.
 
 ## Amazon
 
