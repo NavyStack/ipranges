@@ -183,6 +183,21 @@ jobs:
           commit_message: '[BOT] [Digitalocean] changes - ${{ steps.digitalocean-extract-timestamp.outputs.digitalocean_utc }}'
           push_options: '--force'
 
+      - name: Run Betterstack Script
+        run: |
+          chmod +x ./betterstack/start.sh
+          ./betterstack/start.sh
+
+      #- name: Extract Timestamp from File (Betterstack)
+      #  id: betterstack-extract-timestamp
+      #  run: echo "digitalocean_utc=$(<./betterstack/timestamp.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Git Auto Commit (Betterstack)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '[BOT] [Betterstack] changes - ${{ steps.betterstack-extract-timestamp.outputs.betterstack_utc }}'
+          push_options: '--force'
+
       ##################################################################################################################################
       - name: Install Node.js
         uses: actions/setup-node@v4
