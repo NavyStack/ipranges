@@ -8,6 +8,8 @@ This script simplifies the organization of publicly available IP addresses gathe
 
 ### Amazon
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/amazon/ipv4.txt
 ```
@@ -19,6 +21,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/amazon/ipv4_mini.txt
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/amazon/ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/amazon/ipv6.txt
@@ -34,6 +38,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/amazon/ipv6_comma.txt
 
 ### Bingbot
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/bingbot/ipv4.txt
 ```
@@ -48,6 +54,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/bingbot/ipv4_comma.txt
 
 ### Cloudflare
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/cloudflare/ipv4.txt
 ```
@@ -59,6 +67,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/cloudflare/ipv4_mini.t
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/cloudflare/ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/cloudflare/ipv6.txt
@@ -74,6 +84,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/cloudflare/ipv6_comma.
 
 ### Digitalocean
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/digitalocean/ipv4.txt
 ```
@@ -85,6 +97,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/digitalocean/ipv4_mini
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/digitalocean/ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/digitalocean/ipv6.txt
@@ -100,6 +114,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/digitalocean/ipv6_comm
 
 ### Github
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/github/ipv4.txt
 ```
@@ -111,6 +127,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/github/ipv4_mini.txt
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/github/ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/github/ipv6.txt
@@ -126,6 +144,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/github/ipv6_comma.txt
 
 ### Googlebot
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/googlebot/ipv4.txt
 ```
@@ -137,6 +157,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/googlebot/ipv4_mini.tx
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/googlebot/ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/googlebot/ipv6.txt
@@ -152,6 +174,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/googlebot/ipv6_comma.t
 
 ### Google + Googlebot
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/google/ipv4.txt
 ```
@@ -163,6 +187,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/google/ipv4_mini.txt
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/google/ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/google/ipv6.txt
@@ -178,6 +204,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/google/ipv6_comma.txt
 
 ### Linode
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/linode/ipv4.txt
 ```
@@ -189,6 +217,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/linode/ipv4_mini.txt
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/linode/ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/linode/ipv6.txt
@@ -204,6 +234,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/linode/ipv6_comma.txt
 
 ### Microsoft-Azure (ALL)
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/all_ipv4.txt
 ```
@@ -215,6 +247,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/all_ip
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/all_ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/all_ipv6.txt
@@ -230,6 +264,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/all_ip
 
 ### Microsoft-Azure (China)
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/china/ipv4.txt
 ```
@@ -241,6 +277,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/china/
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/china/ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/china/ipv6.txt
@@ -256,6 +294,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/china/
 
 ### Microsoft-Azure (Germany)
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/germany/ipv4.txt
 ```
@@ -267,6 +307,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/german
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/germany/ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/germany/ipv6.txt
@@ -282,6 +324,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/german
 
 ### Microsoft-Azure (Public Cloud Only)
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/public-cloud/ipv4.txt
 ```
@@ -293,6 +337,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/public
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/public-cloud/ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/public-cloud/ipv6.txt
@@ -308,6 +354,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/public
 
 ### Microsoft-Azure (US GOV)
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/us-gov/ipv4.txt
 ```
@@ -319,6 +367,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/us-gov
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/us-gov/ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/us-gov/ipv6.txt
@@ -334,6 +384,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/us-gov
 
 ### ORACLE (Oracle Cloud Infrastructure(OCI))
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/oracle/ipv4.txt
 ```
@@ -348,6 +400,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/oracle/ipv4_comma.txt
 
 ### Vultr
 
+#### IPv4
+
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv4.txt
 ```
@@ -359,6 +413,8 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv4_mini.txt
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv4_comma.txt
 ```
+
+#### IPv6
 
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv6.txt
