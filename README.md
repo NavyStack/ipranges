@@ -443,6 +443,40 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv6_mini.txt
 https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv6_comma.txt
 ```
 
+---
+
+## UPtime bot
+
+## Betterstack
+
+### IPv4
+
+```bash
+https://raw.githubusercontent.com/NavyStack/ipranges/main/betterstack/ipv4.txt
+```
+
+```bash
+https://raw.githubusercontent.com/NavyStack/ipranges/main/betterstack/ipv4_mini.txt
+```
+
+```bash
+https://raw.githubusercontent.com/NavyStack/ipranges/main/betterstack/ipv4_comma.txt
+```
+
+### IPv6
+
+```bash
+https://raw.githubusercontent.com/NavyStack/ipranges/main/betterstack/ipv6.txt
+```
+
+```bash
+https://raw.githubusercontent.com/NavyStack/ipranges/main/betterstack/ipv6_mini.txt
+```
+
+```bash
+https://raw.githubusercontent.com/NavyStack/ipranges/main/betterstack/ipv6_comma.txt
+```
+
 ## Important Note:
 
 > [!WARNING]
