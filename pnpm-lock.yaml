@@ -15,8 +15,8 @@ devDependencies:
     specifier: ^6.21.0
     version: 6.21.0(eslint@8.56.0)(typescript@5.3.3)
   cidr-tools:
-    specifier: ^7.0.4
-    version: 7.0.4
+    specifier: ^7.0.5
+    version: 7.0.5
   eslint:
     specifier: ^8.56.0
     version: 8.56.0
@@ -346,8 +346,8 @@ packages:
       supports-color: 7.2.0
     dev: true
 
-  /cidr-tools@7.0.4:
-    resolution: {integrity: sha512-bKd6xC01ObuVKvJPGdV9Rz02KFO3mtHwMe/QTlcVuFAmU5n3RN/F3FgppHZaQjM+c/1i9YB9rgKNH/5iVqwCoA==}
+  /cidr-tools@7.0.5:
+    resolution: {integrity: sha512-whAWCwif0BfUnsf0zs5PxPAVi48lt5npjDCRAo3imAMZHcvNHe9hpd40xEjN15KP0yzwYSY0GpbTZLiwTHLAPQ==}
     engines: {node: '>=18'}
     dependencies:
       ip-bigint: 8.0.2
