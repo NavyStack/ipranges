@@ -1,4 +1,4 @@
-import { merge } from 'cidr-tools';
+import { mergeCidr } from 'cidr-tools';
 import { promises as fs } from 'fs';
 import path from 'path';
 // Check if the environment is set to development mode
@@ -36,7 +36,7 @@ const writeFile = async ({ filePath, content }) => {
 // Function to merge CIDR addresses
 const mergeAddresses = (addresses) => {
     try {
-        const mergedAddresses = merge(addresses);
+        const mergedAddresses = mergeCidr(addresses);
         return Promise.resolve(mergedAddresses);
     }
     catch (error) {

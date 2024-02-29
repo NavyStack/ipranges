@@ -1,4 +1,4 @@
-import { merge } from 'cidr-tools'
+import { mergeCidr } from 'cidr-tools'
 import { promises as fs } from 'fs'
 import path from 'path'
 import { FileOperationParams, LogParams, FileProcessFunction } from 'types'
@@ -51,7 +51,7 @@ const writeFile = async ({
 // Function to merge CIDR addresses
 const mergeAddresses = (addresses: string[]): Promise<string[]> => {
   try {
-    const mergedAddresses = merge(addresses)
+    const mergedAddresses = mergeCidr(addresses)
     return Promise.resolve(mergedAddresses)
   } catch (error: unknown) {
     logError('merging addresses', error as Error)
