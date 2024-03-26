@@ -16,7 +16,7 @@
     "IP ranges",
     "tool"
   ],
-  "author": "NavyStack <137406386+Navystack@users.noreply.github.com>",
+  "author": "NavyStack <navystack@askfront.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/NavyStack/ipranges.git"
@@ -24,12 +24,12 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.11.30",
-    "@typescript-eslint/eslint-plugin": "^7.3.0",
-    "@typescript-eslint/parser": "^7.3.1",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
     "cidr-tools": "^9.1.1",
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
     "prettier-plugin-sh": "^0.14.0",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.3"
   }
 }
