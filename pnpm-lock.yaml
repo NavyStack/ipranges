@@ -15,8 +15,8 @@ devDependencies:
     specifier: ^7.8.0
     version: 7.8.0(eslint@8.57.0)(typescript@5.4.5)
   cidr-tools:
-    specifier: ^9.1.1
-    version: 9.1.1
+    specifier: ^10.0.0
+    version: 10.0.0
   eslint:
     specifier: ^8.57.0
     version: 8.57.0
@@ -346,11 +346,11 @@ packages:
       supports-color: 7.2.0
     dev: true
 
-  /cidr-tools@9.1.1:
-    resolution: {integrity: sha512-jnOGG/AI0y3KiEkn5ummB6o7iCKUUXeh5H9FV+IM64j2ryVpbwxQOwNR49r2fdRviOzWBCDmsRAKHFamR6DJHQ==}
+  /cidr-tools@10.0.0:
+    resolution: {integrity: sha512-+IG3vqVhNx0LAtIboMU7JYDvbJls07GjxG7GFQFWFEY3PRazPTTBo134KZs7kMm0g3mxYvX4jjffRcVEErMt+A==}
     engines: {node: '>=18'}
     dependencies:
-      ip-bigint: 8.0.2
+      ip-bigint: 8.1.0
     dev: true
 
   /color-convert@2.0.1:
@@ -655,8 +655,8 @@ packages:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
     dev: true
 
-  /ip-bigint@8.0.2:
-    resolution: {integrity: sha512-UMKHGx7+4O2mD/6jnpNtt4UMA0tRQ3XAiNVYlbLssFU1LegKqKwPqbqtLVW7lQU/c6rCWI1hcxxs4TP96Xa+rQ==}
+  /ip-bigint@8.1.0:
+    resolution: {integrity: sha512-SfmYldNIYFGcsbpVhCXe37kGxMR9DtVnIn0H9OYKRfdgQYPqVn6zywZhTNL0kzm4XbjExRrjua9sHnvkYnZ8Og==}
     engines: {node: '>=18'}
     dev: true
 
