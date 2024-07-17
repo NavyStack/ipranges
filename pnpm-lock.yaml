@@ -18,8 +18,8 @@ importers:
         specifier: ^7.16.0
         version: 7.16.0(eslint@9.7.0)(typescript@5.5.3)
       cidr-tools:
-        specifier: ^10.0.1
-        version: 10.0.1
+        specifier: ^10.1.0
+        version: 10.1.0
       eslint:
         specifier: ^9.7.0
         version: 9.7.0
@@ -191,8 +191,8 @@ packages:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
 
-  cidr-tools@10.0.1:
-    resolution: {integrity: sha512-10wPVOLZG1JhmzymDYzLSRZBMYoTAFnS3M6WS/Lt4lFg25TihvCO4fr0EEU4F4QD8/pPRWAdIFqvinQcXU+E6g==}
+  cidr-tools@10.1.0:
+    resolution: {integrity: sha512-x4JvoS5vDwbdeUJqYCx/0ClseQd0hD1oEkqfXbrAz6d2phY/4ZmLHF+X9Ib7AeeTRi20wmu//m092F5oXwbmrg==}
     engines: {node: '>=18'}
 
   color-convert@2.0.1:
@@ -733,7 +733,7 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
-  cidr-tools@10.0.1:
+  cidr-tools@10.1.0:
     dependencies:
       ip-bigint: 8.1.1
 
