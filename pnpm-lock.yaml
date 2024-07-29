@@ -18,8 +18,8 @@ importers:
         specifier: ^7.16.1
         version: 7.16.1(eslint@9.7.0)(typescript@5.5.3)
       cidr-tools:
-        specifier: ^10.1.0
-        version: 10.1.0
+        specifier: ^11.0.0
+        version: 11.0.0
       eslint:
         specifier: ^9.7.0
         version: 9.7.0
@@ -191,8 +191,8 @@ packages:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
 
-  cidr-tools@10.1.0:
-    resolution: {integrity: sha512-x4JvoS5vDwbdeUJqYCx/0ClseQd0hD1oEkqfXbrAz6d2phY/4ZmLHF+X9Ib7AeeTRi20wmu//m092F5oXwbmrg==}
+  cidr-tools@11.0.0:
+    resolution: {integrity: sha512-CTZfrmRkRIGRwc7scvxHVTT8AGs+hegAs/mLINebJEnZ2hP4Bp0xAHjndXXE+20N99VKz82vEoT9yNlMb41WEw==}
     engines: {node: '>=18'}
 
   color-convert@2.0.1:
@@ -336,8 +336,8 @@ packages:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
     engines: {node: '>=0.8.19'}
 
-  ip-bigint@8.1.1:
-    resolution: {integrity: sha512-+/H/+4CyuwGMXtIcjv6R/c0p8xvKIwp5O8EATl49GDXzwCcVz2q+lST8OXFveQONNcESymSTJ3A3Bsq46e8Y/w==}
+  ip-bigint@8.2.0:
+    resolution: {integrity: sha512-46EAEKzGNxojH5JaGEeCix49tL4h1W8ia5mhogZ68HroVAfyLj1E+SFFid4GuyK0mdIKjwcAITLqwg1wlkx2iQ==}
     engines: {node: '>=18'}
 
   is-extglob@2.1.1:
@@ -733,9 +733,9 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
-  cidr-tools@10.1.0:
+  cidr-tools@11.0.0:
     dependencies:
-      ip-bigint: 8.1.1
+      ip-bigint: 8.2.0
 
   color-convert@2.0.1:
     dependencies:
@@ -899,7 +899,7 @@ snapshots:
 
   imurmurhash@0.1.4: {}
 
-  ip-bigint@8.1.1: {}
+  ip-bigint@8.2.0: {}
 
   is-extglob@2.1.1: {}
 
