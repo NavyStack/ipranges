@@ -1,31 +1,33 @@
+// src/main.ts
 import { mergeCidr } from 'cidr-tools'
 import { promises as fs } from 'fs'
 import path from 'path'
-import { FileOperationParams, LogParams, FileProcessFunction } from 'types'
+import {
+  FilePathParams,
+  FileContentParams,
+  LogParams,
+  FileProcessFunction,
+  AddressMergeResult
+} from './types'
 
-// Check if the environment is set to development mode
 const debugMode = process.env.NODE_ENV === 'development'
 
-// Function to log messages if in debug mode
 const logMessage = ({
   outputRelativePath,
   sourceFilePath
 }: LogParams): void => {
-  debugMode &&
+  if (debugMode) {
     console.log(
       `File "${outputRelativePath}" created with merged CIDR addresses from "${sourceFilePath}".`
     )
+  }
 }
 
-// Function to log errors
 const logError = (message: string, error?: Error): void => {
-  console.error(`Error: ${message}`, (error as Error)?.message || error)
+  console.error(`Error: ${message}`, error?.message || error)
 }
 
-// Function to read a file asynchronously
-const readFile = async ({
-  filePath
-}: FileOperationParams): Promise<string[]> => {
+const readFile = async ({ filePath }: FilePathParams): Promise<string[]> => {
   try {
     const content = await fs.readFile(filePath, 'utf-8')
     return content.trim().split('\n')
@@ -35,11 +37,10 @@ const readFile = async ({
   }
 }
 
-// Function to write to a file asynchronously
 const writeFile = async ({
   filePath,
   content
-}: FileOperationParams & { content: string[] }): Promise<void> => {
+}: FileContentParams): Promise<void> => {
   try {
     await fs.writeFile(filePath, content.join('\n'))
   } catch (error: unknown) {
@@ -48,26 +49,23 @@ const writeFile = async ({
   }
 }
 
-// Function to merge CIDR addresses
-const mergeAddresses = (addresses: string[]): Promise<string[]> => {
+const mergeAddresses = (addresses: string[]): AddressMergeResult => {
   try {
     const mergedAddresses = mergeCidr(addresses)
-    return Promise.resolve(mergedAddresses)
+    return { mergedAddresses }
   } catch (error: unknown) {
     logError('merging addresses', error as Error)
     throw error
   }
 }
 
-// Function to process a single file
 const processFile: FileProcessFunction = async ({
   sourceFilePath,
   outputSuffix
 }) => {
   try {
-    const mergedAddresses = await mergeAddresses(
-      await readFile({ filePath: sourceFilePath })
-    )
+    const addresses = await readFile({ filePath: sourceFilePath })
+    const { mergedAddresses } = mergeAddresses(addresses)
     const outputRelativePath = generateOutputPath(sourceFilePath, outputSuffix)
     await writeFile({ filePath: outputRelativePath, content: mergedAddresses })
     logMessage({ outputRelativePath, sourceFilePath })
@@ -78,22 +76,19 @@ const processFile: FileProcessFunction = async ({
   }
 }
 
-// Function to process a single file and separate addresses with commas
 const processFileWithComma: FileProcessFunction = async ({
   sourceFilePath,
   outputSuffix
 }) => {
   try {
-    const mergedAddresses = await mergeAddresses(
-      await readFile({ filePath: sourceFilePath })
-    )
+    const addresses = await readFile({ filePath: sourceFilePath })
+    const { mergedAddresses } = mergeAddresses(addresses)
     const outputRelativePath = generateOutputPath(sourceFilePath, outputSuffix)
-    // Join addresses with commas
     const addressesWithComma = mergedAddresses.join(',')
     await writeFile({
       filePath: outputRelativePath,
       content: [addressesWithComma]
-    }) // Write addresses as a single line with commas
+    })
     logMessage({ outputRelativePath, sourceFilePath })
     return outputRelativePath
   } catch (error: unknown) {
@@ -102,7 +97,6 @@ const processFileWithComma: FileProcessFunction = async ({
   }
 }
 
-// Function to generate the output path for a file
 const generateOutputPath = (
   sourceFilePath: string,
   outputSuffix: string
@@ -114,7 +108,6 @@ const generateOutputPath = (
   )
 }
 
-// Asynchronous generator function to recursively iterate through directories
 const Recursively = async function* (dir: string): AsyncGenerator<string> {
   try {
     const files = await fs.readdir(dir)
@@ -133,7 +126,6 @@ const Recursively = async function* (dir: string): AsyncGenerator<string> {
   }
 }
 
-// Function to process multiple files
 const processFiles = async ({
   filesToProcess,
   outputSuffix,
@@ -162,8 +154,8 @@ const processFiles = async ({
           return []
         }
 
-        return await Promise.all(
-          sourceFilePaths.map(async (sourceFilePath) =>
+        return Promise.all(
+          sourceFilePaths.map((sourceFilePath) =>
             processFunction({ sourceFilePath, outputSuffix })
           )
         )
@@ -177,31 +169,27 @@ const processFiles = async ({
   }
 }
 
-// Extract files to process from command line arguments
 const filesToProcess = process.argv.slice(3)
 
-// Map of process options and their corresponding output suffix and process function
 const processOptionsMap: Record<
   string,
   { outputSuffix: string; processFunction: FileProcessFunction }
 > = {
   '-m': { outputSuffix: '_mini', processFunction: processFile },
-  '-c': { outputSuffix: '_comma', processFunction: processFileWithComma } // Use processFileWithComma for -c option
+  '-c': { outputSuffix: '_comma', processFunction: processFileWithComma }
 }
 
-// Extract the process option from command line arguments
 const processOption = process.argv[2]
 
-// If a valid process option and at least one file to process are provided
 if (processOptionsMap[processOption] && filesToProcess.length >= 1) {
   const { outputSuffix, processFunction } = processOptionsMap[processOption]
   processFiles({ filesToProcess, outputSuffix, processFunction })
     .then((result) => console.log('All files processed successfully:', result))
     .catch((error: unknown) =>
-      console.error('Error during file processing:', error as Error)
+      logError('Error during file processing:', error as Error)
     )
 } else {
   console.error(
-    'Invalid command. Please use: tsc && node main.js [-m | -c] file1.txt [file2.txt ...]'
+    'Invalid command. Please use: tsc && node dist/main.js [-m | -c] file1.txt [file2.txt ...]'
   )
 }

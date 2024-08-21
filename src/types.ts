@@ -1,5 +1,10 @@
-export interface FileOperationParams {
+// src/types.ts
+export interface FilePathParams {
   filePath: string
+}
+
+export interface FileContentParams extends FilePathParams {
+  content: string[]
 }
 
 export interface LogParams {

@@ -1,15 +1,14 @@
 {
   "name": "navystack-ipranges",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "A tool for processing and merging CIDR ranges in IP address files.",
-  "main": "main.js",
   "type": "module",
   "scripts": {
-    "build": "tsc && node main.js -m ipv4.txt ipv6.txt && node main.js -c ipv4.txt ipv6.txt",
-    "build-m": "tsc && node main.js -m ipv4.txt ipv6.txt",
-    "build-c": "tsc && node main.js -c ipv4.txt ipv6.txt",
+    "build": "tsc && node dist/main.js -m ipv4.txt ipv6.txt && node dist/main.js -c ipv4.txt ipv6.txt",
+    "build-m": "tsc && node dist/main.js -m ipv4.txt ipv6.txt",
+    "build-c": "tsc && node dist/main.js -c ipv4.txt ipv6.txt",
     "t1": "prettier -w . && eslint .",
-    "t2": "NODE_ENV=development node main.js ipv4.txt ipv6.txt"
+    "t2": "NODE_ENV=development node dist/main.js ipv4.txt ipv6.txt"
   },
   "keywords": [
     "CIDR",
@@ -23,13 +22,14 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^22.2.0",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
-    "cidr-tools": "^11.0.0",
-    "eslint": "^9.8.0",
+    "@types/node": "^22.4.2",
+    "@typescript-eslint/eslint-plugin": "^8.2.0",
+    "@typescript-eslint/parser": "^8.2.0",
+    "cidr-tools": "^11.0.1",
+    "eslint": "^9.9.0",
     "prettier": "^3.3.3",
     "prettier-plugin-sh": "^0.14.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   }
 }

@@ -1,17 +1,14 @@
+// tsconfig.json
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "strict": true,
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "outDir": "./dist",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "strictNullChecks": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "baseUrl": "./",
-    "paths": {
-      "cidr-tools": ["node_modules/cidr-tools/dist/index.d.ts"]
-    }
+    "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["main.js"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }
