@@ -1,4 +1,4 @@
-name: Update IP Ranges
+name: Update IP Ranges and Build Artifacts
 
 on:
   push:
@@ -18,194 +18,13 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Run Google Script
-        run: |
-          chmod +x ./google/start.sh
-          ./google/start.sh
-
-      - name: Extract Timestamp from File (Google)
-        id: google-extract-timestamp
-        run: echo "google_utc=$(<./google/timestamp.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Git Auto Commit (Google)
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '[BOT] [Google] changes - ${{ steps.google-extract-timestamp.outputs.google_utc }}'
-          push_options: '--force'
-
-      - name: Run Googlebot Script
-        run: |
-          chmod +x ./googlebot/start.sh
-          ./googlebot/start.sh
-
-      - name: Extract Timestamp from File (Googlebot)
-        id: googlebot-extract-timestamp
-        run: echo "googlebot_utc=$(<./googlebot/timestamp.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Git Auto Commit (Googlebot)
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '[BOT] [Googlebot] changes - ${{ steps.googlebot-extract-timestamp.outputs.googlebot_utc }}'
-          push_options: '--force'
-
-      - name: Run OCI Script
-        run: |
-          chmod +x ./oracle/start.sh
-          ./oracle/start.sh
-
-      - name: Extract Timestamp from File (OCI)
-        id: oracle-extract-timestamp
-        run: echo "oracle_utc=$(<./oracle/timestamp.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Git Auto Commit (OCI)
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '[BOT] [OCI] changes - ${{ steps.oracle-extract-timestamp.outputs.oracle_utc }}'
-          push_options: '--force'
-
-      - name: Run Azure Script
-        run: |
-          chmod +x ./microsoft-azure/start.sh
-          ./microsoft-azure/start.sh
-
-      - name: Extract Timestamp from File (Azure)
-        id: azure-extract-timestamp
-        run: echo "azure_utc=$(<./microsoft-azure/timestamp.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Git Auto Commit (Azure)
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '[BOT] [Azure] changes - ${{ steps.azure-extract-timestamp.outputs.azure_utc }}'
-          push_options: '--force'
-
-      - name: Run Github Script
-        run: |
-          chmod +x ./github/start.sh
-          ./github/start.sh
-
-      - name: Extract Timestamp from File (Github)
-        id: github-extract-timestamp
-        run: echo "github_utc=$(<./github/timestamp.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Git Auto Commit (Github)
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '[BOT] [Github] changes - ${{ steps.github-extract-timestamp.outputs.github_utc }}'
-          push_options: '--force'
-
-      - name: Run Cloudflare Script
-        run: |
-          chmod +x ./cloudflare/start.sh
-          ./cloudflare/start.sh
-
-      - name: Extract Timestamp from File (Cloudflare)
-        id: cloudflare-extract-timestamp
-        run: echo "cloudflare_utc=$(<./cloudflare/timestamp.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Git Auto Commit (Cloudflare)
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '[BOT] [Cloudflare] changes - ${{ steps.cloudflare-extract-timestamp.outputs.cloudflare_utc }}'
-          push_options: '--force'
-
-      - name: Run AWS Script
-        run: |
-          chmod +x ./amazon/start.sh
-          ./amazon/start.sh
-
-      - name: Extract Timestamp from File (AWS)
-        id: amazon-extract-timestamp
-        run: echo "amazon_utc=$(<./amazon/timestamp.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Git Auto Commit (AWS)
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '[BOT] [AWS] changes - ${{ steps.amazon-extract-timestamp.outputs.amazon_utc }}'
-          push_options: '--force'
-
-      - name: Run Bing Script
-        run: |
-          chmod +x ./bingbot/start.sh
-          ./bingbot/start.sh
-
-      - name: Extract Timestamp from File (Bing)
-        id: bingbot-extract-timestamp
-        run: echo "bingbot_utc=$(<./bingbot/timestamp.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Git Auto Commit (Bing)
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '[BOT] [Bing] changes - ${{ steps.bingbot-extract-timestamp.outputs.bingbot_utc }}'
-          push_options: '--force'
-
-      - name: Run Vultr Script
-        run: |
-          chmod +x ./vultr/start.sh
-          ./vultr/start.sh
-
-      - name: Extract Timestamp from File (Vultr)
-        id: vultr-extract-timestamp
-        run: echo "vultr_utc=$(<./vultr/timestamp.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Git Auto Commit (Vultr)
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '[BOT] [Vultr] changes'
-          push_options: '--force'
-
-      - name: Run Linode Script
-        run: |
-          chmod +x ./linode/start.sh
-          ./linode/start.sh
-
-      - name: Extract Timestamp from File (Linode)
-        id: linode-extract-timestamp
-        run: echo "linode_utc=$(<./linode/timestamp.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Git Auto Commit (Linode)
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '[BOT] [Linode] changes - ${{ steps.linode-extract-timestamp.outputs.linode_utc }}'
-          push_options: '--force'
-
-      - name: Run Digitalocean Script
-        run: |
-          chmod +x ./digitalocean/start.sh
-          ./digitalocean/start.sh
-
-      - name: Extract Timestamp from File (Digitalocean)
-        id: digitalocean-extract-timestamp
-        run: echo "digitalocean_utc=$(<./digitalocean/timestamp.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Git Auto Commit (Digitalocean)
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '[BOT] [Digitalocean] changes - ${{ steps.digitalocean-extract-timestamp.outputs.digitalocean_utc }}'
-          push_options: '--force'
-
-      - name: Run Betterstack Script
-        run: |
-          chmod +x ./betterstack/start.sh
-          ./betterstack/start.sh
-
-      #- name: Extract Timestamp from File (Betterstack)
-      #  id: betterstack-extract-timestamp
-      #  run: echo "digitalocean_utc=$(<./betterstack/timestamp.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Git Auto Commit (Betterstack)
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '[BOT] [Betterstack] changes - ${{ steps.betterstack-extract-timestamp.outputs.betterstack_utc }}'
-          push_options: '--force'
-
-      ##################################################################################################################################
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 9
           run_install: false
@@ -215,8 +34,8 @@ jobs:
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      - uses: actions/cache@v4
-        name: Setup pnpm cache
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
         with:
           path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -226,14 +45,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: build
+      - name: Build Project
         run: pnpm build
 
-      - name: set env
-        run: echo "NOW=$(TZ=Asia/Seoul date +'%Y.%m.%d')" >> $GITHUB_ENV
+      - name: Compress Mini Artifacts
+        run: pnpm build-m
 
-      - name: Mini Commit And Push
+      - name: Compress Comma Artifacts
+        run: pnpm build-c
+
+      - name: Set Current Date
+        run: echo "NOW=$(TZ=Asia/Seoul date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: '[BOT] [MINI] changes - ${{ env.NOW }}'
+          commit_message: '[BOT] changes - ${{ env.NOW }}'
           push_options: '--force'

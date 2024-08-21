@@ -1,4 +1,11 @@
 // src/microsoft-azure/processor.ts
+
+/*
+ * https://azure.microsoft.com/en-us/updates/service-tag-discovery-api-in-preview/
+ * https://docs.microsoft.com/en-us/microsoft-365/enterprise/urls-and-ip-address-ranges?view=o365-worldwide
+ * From: https://github.com/jensihnow/AzurePublicIPAddressRanges/blob/main/.github/workflows/main.yml
+ */
+
 import fetch from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
@@ -18,13 +25,44 @@ const createOutputDir = async (dir: string) => {
   await fs.mkdir(dir, { recursive: true })
 }
 
-// Fetch data from a URL
-const fetchData = async (url: string): Promise<string> => {
-  const response = await fetch(url)
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${url}`)
+// Fetch data from a URL with retry logic and timeout using AbortController
+const fetchData = async (
+  url: string,
+  retries = 3,
+  timeout = 10000
+): Promise<string> => {
+  for (let i = 0; i < retries; i++) {
+    const controller = new AbortController()
+    const id = setTimeout(() => controller.abort(), timeout)
+
+    try {
+      const response = await fetch(url, { signal: controller.signal })
+      clearTimeout(id)
+
+      if (!response.ok) {
+        throw new Error(`[Azure] Failed to fetch ${url}, Status: ${response.status}`)
+      }
+
+      return await response.text()
+    } catch (error) {
+      clearTimeout(id)
+
+      if (error.name === 'AbortError') {
+        console.log(`[Azure] Request to ${url} timed out`)
+      } else {
+        console.log(`[Azure] Error fetching ${url}: ${error.message}`)
+      }
+
+      if (i === retries - 1) {
+        throw error
+      }
+
+      console.log(`[Azure] Retrying fetch for ${url} (${i + 1}/${retries})`)
+      await new Promise((res) => setTimeout(res, 1000))
+    }
   }
-  return response.text()
+
+  throw new Error(`[Azure] Failed to fetch ${url} after ${retries} retries`)
 }
 
 // Parse Microsoft IP ranges from JSON data
@@ -66,7 +104,7 @@ const downloadAndParseBackground = async (
     `https://www.microsoft.com/en-us/download/confirmation.aspx?id=${regionId}`
   )
   const urlMatch = pageContent.match(/<a href=['"][^'"]*ServiceTags_[^'"]*['"]/)
-  if (!urlMatch) throw new Error('Download URL not found')
+  if (!urlMatch) throw new Error('[Azure] Download URL not found')
   const downloadUrl = urlMatch[0]
     .replace(/<a href=['"]/, '')
     .replace(/['"]/, '')
@@ -87,25 +125,18 @@ const downloadAndParseBackground = async (
 
 // Consolidate files into single files for all regions
 const consolidateFiles = async () => {
-  const ipv4Files: string[] = []
-  const ipv6Files: string[] = []
-
-  for (const [regionName] of Object.entries(REGION_IDS)) {
-    ipv4Files.push(path.join(OUTPUT_DIR, regionName, 'ipv4.txt'))
-    ipv6Files.push(path.join(OUTPUT_DIR, regionName, 'ipv6.txt'))
-  }
-
   const allIpv4Addresses: Set<string> = new Set()
   const allIpv6Addresses: Set<string> = new Set()
 
-  for (const file of ipv4Files) {
-    const content = await fs.readFile(file, 'utf-8')
-    content.split('\n').forEach((line) => allIpv4Addresses.add(line.trim()))
-  }
+  for (const [regionName] of Object.entries(REGION_IDS)) {
+    const ipv4File = path.join(OUTPUT_DIR, regionName, 'ipv4.txt')
+    const ipv6File = path.join(OUTPUT_DIR, regionName, 'ipv6.txt')
 
-  for (const file of ipv6Files) {
-    const content = await fs.readFile(file, 'utf-8')
-    content.split('\n').forEach((line) => allIpv6Addresses.add(line.trim()))
+    const ipv4Content = await fs.readFile(ipv4File, 'utf-8')
+    const ipv6Content = await fs.readFile(ipv6File, 'utf-8')
+
+    ipv4Content.split('\n').forEach((line) => allIpv4Addresses.add(line.trim()))
+    ipv6Content.split('\n').forEach((line) => allIpv6Addresses.add(line.trim()))
   }
 
   await fs.writeFile(
@@ -128,11 +159,11 @@ const main = async () => {
     )
     await consolidateFiles()
 
-    console.log('Azure IP ranges have been processed and saved.')
+    console.log('[Azure] IP ranges have been processed and saved.')
   } catch (error) {
     console.error('Error:', error)
     process.exit(1)
   }
 }
 
-main()
+export default main

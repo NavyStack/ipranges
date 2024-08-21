@@ -1,4 +1,9 @@
 // src/google/processor.ts
+/**
+ * https://www.gstatic.com/ipranges/goog.txt
+ * https://www.gstatic.com/ipranges/cloud.json
+ * https://developers.google.com/search/apis/ipranges/googlebot.json
+ */
 import fetch from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
@@ -8,7 +13,7 @@ import {
   GoogleAddressFiles
 } from '../types'
 
-// Define file paths and URLs
+// Define base directory and URLs
 const GOOGLE_DIR = 'google'
 const BASE_URLS = {
   goog: 'https://www.gstatic.com/ipranges/goog.txt',
@@ -96,9 +101,38 @@ const processIpRanges = (data: {
 
 // Utility function to save addresses to files
 const saveAddressesToFile = async (addresses: GoogleAddressFiles) => {
-  await fs.mkdir(GOOGLE_DIR, { recursive: true })
+  // Save combined results into separate directories and files
+  await Promise.all([
+    saveToCategoryDir('goog', addresses.googIpv4, addresses.googIpv6),
+    saveToCategoryDir('cloud', addresses.cloudIpv4, addresses.cloudIpv6),
+    saveToCategoryDir(
+      'googlebot',
+      addresses.googlebotIpv4,
+      addresses.googlebotIpv6
+    ),
+    saveToCombinedFiles(addresses)
+  ])
 
-  // Save combined results into separate files
+  console.log('[Google] IP ranges have been saved to the', GOOGLE_DIR, 'directory.')
+}
+
+// Utility function to save IPs to category directories
+const saveToCategoryDir = async (
+  category: string,
+  ipv4: string,
+  ipv6: string
+) => {
+  const dirPath = path.join(GOOGLE_DIR, category)
+  await fs.mkdir(dirPath, { recursive: true })
+
+  await Promise.all([
+    fs.writeFile(path.join(dirPath, 'ipv4.txt'), ipv4),
+    fs.writeFile(path.join(dirPath, 'ipv6.txt'), ipv6)
+  ])
+}
+
+// Utility function to save combined IPs to google directory
+const saveToCombinedFiles = async (addresses: GoogleAddressFiles) => {
   await Promise.all([
     fs.writeFile(
       path.join(GOOGLE_DIR, 'ipv4.txt'),
@@ -107,22 +141,8 @@ const saveAddressesToFile = async (addresses: GoogleAddressFiles) => {
     fs.writeFile(
       path.join(GOOGLE_DIR, 'ipv6.txt'),
       addresses.ipv6Addresses.join('\n')
-    ),
-    fs.writeFile(path.join(GOOGLE_DIR, 'ipv4_goog.txt'), addresses.googIpv4),
-    fs.writeFile(path.join(GOOGLE_DIR, 'ipv6_goog.txt'), addresses.googIpv6),
-    fs.writeFile(path.join(GOOGLE_DIR, 'ipv4_cloud.txt'), addresses.cloudIpv4),
-    fs.writeFile(path.join(GOOGLE_DIR, 'ipv6_cloud.txt'), addresses.cloudIpv6),
-    fs.writeFile(
-      path.join(GOOGLE_DIR, 'ipv4_googlebot.txt'),
-      addresses.googlebotIpv4
-    ),
-    fs.writeFile(
-      path.join(GOOGLE_DIR, 'ipv6_googlebot.txt'),
-      addresses.googlebotIpv6
     )
   ])
-
-  console.log('IP ranges have been saved to the', GOOGLE_DIR, 'directory.')
 }
 
 // Main function
@@ -132,9 +152,9 @@ const main = async (): Promise<void> => {
     const addresses = processIpRanges(data)
     await saveAddressesToFile(addresses)
   } catch (error) {
-    console.error('Error:', error)
+    console.error('[Google] Error:', error)
     process.exit(1)
   }
 }
 
-main()
+export default main

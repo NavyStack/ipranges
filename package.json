@@ -1,14 +1,13 @@
 {
   "name": "navystack-ipranges",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "A tool for processing and merging CIDR ranges in IP address files.",
   "type": "module",
   "scripts": {
-    "build": "tsc && node dist/main.js -m ipv4.txt ipv6.txt && node dist/main.js -c ipv4.txt ipv6.txt",
-    "build-m": "tsc && node dist/main.js -m ipv4.txt ipv6.txt",
-    "build-c": "tsc && node dist/main.js -c ipv4.txt ipv6.txt",
+    "build": "tsx src/main.ts",
+    "build-m": "tsx src/compress.ts -m ipv4.txt ipv6.txt",
+    "build-c": "tsx src/compress.ts -c ipv4.txt ipv6.txt",
     "t1": "prettier -w . && eslint .",
-    "t2": "NODE_ENV=development node dist/main.js ipv4.txt ipv6.txt",
     "clear-txt": "/bin/bash -c 'find . -type f -name \"*.txt\" -exec rm {} +'"
   },
   "keywords": [
@@ -31,7 +30,7 @@
     "node-fetch": "^3.3.2",
     "prettier": "^3.3.3",
     "prettier-plugin-sh": "^0.14.0",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.17.0",
     "typescript": "^5.5.4"
   }
 }

@@ -16,7 +16,7 @@ const fetchBetterstackIps = async (): Promise<void> => {
   const response = await fetch(betterstackUrl)
 
   if (!response.ok) {
-    throw new Error('Failed to fetch BetterStack IP ranges')
+    throw new Error('[BetterStack] Failed to fetch IP ranges')
   }
 
   const text = await response.text()
@@ -49,7 +49,7 @@ const fetchBetterstackIps = async (): Promise<void> => {
   await fs.writeFile(ipv4Output, sortedIpv4.join('\n'))
   await fs.writeFile(ipv6Output, sortedIpv6.join('\n'))
 
-  console.log('BetterStack IP addresses processed and saved successfully.')
+  console.log('[BetterStack] IP addresses processed and saved successfully.')
 }
 
 // Main function
@@ -57,9 +57,9 @@ const main = async (): Promise<void> => {
   try {
     await fetchBetterstackIps()
   } catch (error) {
-    console.error('Error:', error)
+    console.error('[BetterStack] Error:', error)
     process.exit(1)
   }
 }
 
-main()
+export default main

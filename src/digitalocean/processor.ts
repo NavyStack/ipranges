@@ -1,4 +1,9 @@
 // src/digitalocean/processor.ts
+
+/** https://docs.digitalocean.com/products/platform/
+ * From: https://github.com/nccgroup/cloud_ip_ranges
+ * https://github.com/nccgroup/cloud_ip_ranges/blob/24c34811976763b5fa7911ec69b961e671b76e34/cloud_ip_ranges.py#L100
+ */
 import { promises as fs } from 'fs'
 import path from 'path'
 import fetch from 'node-fetch'
@@ -11,7 +16,7 @@ const ipv6Output = path.join('digitalocean', 'ipv6.txt')
 const fetchDigitalOceanIpRanges = async (): Promise<string[]> => {
   const response = await fetch('https://www.digitalocean.com/geo/google.csv')
   if (!response.ok) {
-    throw new Error('Failed to fetch DigitalOcean IP ranges')
+    throw new Error('[Digitalocean] Failed to fetch IP ranges')
   }
 
   // Read the response as text
@@ -64,7 +69,7 @@ const processIpRanges = async (lines: string[]): Promise<void> => {
   await fs.writeFile(ipv4Output, sortedIpv4.join('\n'))
   await fs.writeFile(ipv6Output, sortedIpv6.join('\n'))
 
-  console.log('DigitalOcean IP addresses processed and saved successfully.')
+  console.log('[Digitalocean] IP addresses processed and saved successfully.')
 }
 
 // Main function
@@ -73,9 +78,9 @@ const main = async (): Promise<void> => {
     const lines = await fetchDigitalOceanIpRanges()
     await processIpRanges(lines)
   } catch (error) {
-    console.error('Error:', error)
+    console.error('[Digitalocean] Error:', error)
     process.exit(1)
   }
 }
 
-main()
+export default main

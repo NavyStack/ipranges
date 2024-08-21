@@ -1,4 +1,9 @@
 // src/vultr/processor.ts
+
+/*
+ * https://docs.vultr.com/vultr-ip-space
+ */
+
 import fetch from 'node-fetch'
 import { promises as fs } from 'fs'
 import path from 'path'
@@ -11,7 +16,7 @@ const ipv6Output = path.join('vultr', 'ipv6.txt')
 const fetchVultrIpRanges = async (): Promise<any> => {
   const response = await fetch('https://geofeed.constant.com/?json')
   if (!response.ok) {
-    throw new Error('Failed to fetch Vultr IP ranges')
+    throw new Error('[Vultr] Failed to fetch IP ranges')
   }
   return response.json()
 }
@@ -67,7 +72,7 @@ const processIpRanges = async (data: any): Promise<void> => {
   await fs.writeFile(ipv4Output, sortedIpv4.join('\n'))
   await fs.writeFile(ipv6Output, sortedIpv6.join('\n'))
 
-  console.log('Vultr IP addresses processed and saved successfully.')
+  console.log('[Vultr] IP addresses processed and saved successfully.')
 }
 
 // Main function
@@ -76,9 +81,9 @@ const main = async (): Promise<void> => {
     const data = await fetchVultrIpRanges()
     await processIpRanges(data)
   } catch (error) {
-    console.error('Error:', error)
+    console.error('[Vultr] Error:', error)
     process.exit(1)
   }
 }
 
-main()
+export default main

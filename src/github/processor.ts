@@ -1,4 +1,7 @@
 // src/github/processor.ts
+/**
+ * https://api.github.com/meta
+ */
 import fetch from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
@@ -25,16 +28,18 @@ const ADDRESS_KEYS: Array<keyof GithubApiResponse> = [
   'copilot'
 ]
 
-// Utility function to save addresses to files
+// Utility function to save addresses to files in separate directories
 const saveAddressesToFile = async (
   addresses: { [key: string]: string[] },
-  filePrefix: string
+  addressType: 'ipv4' | 'ipv6'
 ): Promise<void> => {
   const writePromises = Object.entries(addresses).map(
     async ([key, addressList]) => {
-      const filePath = path.join('github', `${filePrefix}_${key}.txt`)
+      const dirPath = path.join('github', key)
+      await fs.mkdir(dirPath, { recursive: true })
+      const filePath = path.join(dirPath, `${addressType}.txt`)
       await fs.writeFile(filePath, addressList.sort().join('\n'))
-      console.log(`Addresses for ${key} saved to ${filePath}`)
+      console.log(`[Github] Addresses for ${key} saved to ${filePath}`)
     }
   )
   await Promise.all(writePromises)
@@ -83,7 +88,7 @@ const fetchAndProcessGithubData = async (): Promise<void> => {
   const response = await fetch(url)
 
   if (!response.ok) {
-    throw new Error('Failed to fetch data from GitHub API.')
+    throw new Error('[Github] Failed to fetch data from GitHub API.')
   }
 
   const data = (await response.json()) as GithubApiResponse
@@ -101,18 +106,18 @@ const fetchAndProcessGithubData = async (): Promise<void> => {
     )
   ])
 
-  console.log('All files saved successfully.')
+  console.log('[Github] All files saved successfully.')
 }
 
 // Main function
 const main = async (): Promise<void> => {
   try {
     await fetchAndProcessGithubData()
-    console.log('Github data processing complete!')
+    console.log('[Github] data processing complete!')
   } catch (error) {
-    console.error('Error:', error)
+    console.error('[Github] Error:', error)
     process.exit(1)
   }
 }
 
-main()
+export default main

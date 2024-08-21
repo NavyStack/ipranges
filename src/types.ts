@@ -1,4 +1,5 @@
 // src/types.ts
+
 export interface FilePathParams {
   filePath: string
 }

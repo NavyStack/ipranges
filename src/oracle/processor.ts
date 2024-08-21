@@ -1,5 +1,7 @@
 // src/oracle/processor.ts
-
+/**
+ * https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json
+ */
 import fetch from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
@@ -13,10 +15,10 @@ const ipv4Output = path.join('oracle', 'ipv4.txt')
 const removeFileIfExists = async (filePath: string): Promise<void> => {
   try {
     await fs.unlink(filePath)
-    console.log(`Step 0: File ${filePath} removed successfully.`)
+    console.log(`[Oracle] ${filePath} removed successfully.`)
   } catch (err) {
     if (err.code === 'ENOENT') {
-      console.log(`Step 0: File ${filePath} does not exist. Skip.`)
+      console.log(`[Oracle] ${filePath} does not exist. Skip.`)
     } else {
       throw err
     }
@@ -30,7 +32,7 @@ const fetchOracleIpRanges = async (): Promise<void> => {
   const response = await fetch(oracleUrl)
 
   if (!response.ok) {
-    throw new Error('Failed to download Oracle IP ranges')
+    throw new Error('[Oracle] Failed to download IP ranges')
   }
 
   const data = (await response.json()) as OracleIpRanges
@@ -43,7 +45,7 @@ const fetchOracleIpRanges = async (): Promise<void> => {
 
   // Save timestamp to file
   await fs.writeFile(timestampFile, oracleUtc)
-  console.log('Step 1: Timestamp saved successfully.')
+  console.log('[Oracle] Timestamp saved successfully.')
 
   // Extract IPv4 addresses
   const ipv4Addresses = data.regions
@@ -51,7 +53,7 @@ const fetchOracleIpRanges = async (): Promise<void> => {
     .filter(Boolean)
 
   if (ipv4Addresses.length === 0) {
-    throw new Error('No IPv4 addresses found')
+    throw new Error('[Oracle] No IPv4 addresses found')
   }
 
   // Sort and remove duplicates
@@ -62,7 +64,7 @@ const fetchOracleIpRanges = async (): Promise<void> => {
   // Write IPv4 addresses to output file
   await fs.writeFile(ipv4Output, sortedIpv4.join('\n'))
   console.log(
-    'Step 2: IPv4 addresses processed, sorted, and saved successfully.'
+    '[Oracle] IPv4 addresses processed, sorted, and saved successfully.'
   )
 }
 
@@ -71,11 +73,11 @@ const main = async (): Promise<void> => {
   try {
     await removeFileIfExists(timestampFile)
     await fetchOracleIpRanges()
-    console.log('OCI Complete!')
+    console.log('[Oracle] Complete!')
   } catch (error) {
-    console.error('Error:', error)
+    console.error('[Oracle] Error:', error)
     process.exit(1)
   }
 }
 
-main()
+export default main

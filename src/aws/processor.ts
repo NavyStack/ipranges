@@ -1,4 +1,7 @@
 // src/aws/processor.ts
+/*
+ * https://docs.aws.amazon.com/general/latest/gr/aws-ip-ranges.html
+ */
 import fetch from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
@@ -14,7 +17,7 @@ const fetchAwsIpRanges = async (): Promise<void> => {
   const response = await fetch('https://ip-ranges.amazonaws.com/ip-ranges.json')
 
   if (!response.ok) {
-    throw new Error('Failed to fetch AWS IP ranges')
+    throw new Error('[AWS] Failed to fetch AWS IP ranges')
   }
 
   const data = (await response.json()) as AwsIpRanges // Type assertion
@@ -50,7 +53,7 @@ const fetchAwsIpRanges = async (): Promise<void> => {
   await fs.writeFile(ipv4Output, sortedIpv4.join('\n'))
   await fs.writeFile(ipv6Output, sortedIpv6.join('\n'))
 
-  console.log('AWS IP addresses processed and saved successfully.')
+  console.log('[AWS] IP addresses processed and saved successfully.')
 }
 
 // Main function
@@ -58,9 +61,9 @@ const main = async (): Promise<void> => {
   try {
     await fetchAwsIpRanges()
   } catch (error) {
-    console.error('Error:', error)
+    console.error('[AWS] Error:', error)
     process.exit(1)
   }
 }
 
-main()
+export default main

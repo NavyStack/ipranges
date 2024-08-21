@@ -1,4 +1,7 @@
 // src/cloudflare/processor.ts
+/**
+ * https://www.cloudflare.com/ips/
+ */
 
 import fetch from 'node-fetch'
 import fs from 'fs/promises'
@@ -14,10 +17,10 @@ const ipv6Output = path.join('cloudflare', 'ipv6.txt')
 const removeFileIfExists = async (filePath: string): Promise<void> => {
   try {
     await fs.unlink(filePath)
-    console.log(`Step 0: File ${filePath} removed successfully.`)
+    console.log(`[Cloudflare] ${filePath} removed successfully.`)
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-      console.log(`Step 0: File ${filePath} does not exist. Skip.`)
+      console.log(`[Cloudflare] : File ${filePath} does not exist. Skip.`)
     } else {
       throw err
     }
@@ -32,10 +35,10 @@ const fetchCloudflareIpRanges = async (): Promise<CloudflareIpRanges> => {
   ])
 
   if (!ipv4Response.ok) {
-    throw new Error('Error: Failed to fetch IPv4 addresses.')
+    throw new Error('[Cloudflare] Error: Failed to fetch IPv4 addresses.')
   }
   if (!ipv6Response.ok) {
-    throw new Error('Error: Failed to fetch IPv6 addresses.')
+    throw new Error('[Cloudflare] Error: Failed to fetch IPv6 addresses.')
   }
 
   const ipv4Text = await ipv4Response.text()
@@ -57,7 +60,7 @@ const processAndSaveIpAddresses = async (
   )
   await fs.writeFile(outputFilePath, sortedUniqueIps.join('\n'))
   console.log(
-    `IP addresses sorted and duplicates removed successfully: ${outputFilePath}`
+    `[Cloudflare] IP addresses sorted and duplicates removed successfully: ${outputFilePath}`
   )
 }
 
@@ -73,13 +76,13 @@ const main = async (): Promise<void> => {
 
     const timestamp = new Date().toISOString()
     await fs.writeFile(timestampFile, timestamp)
-    console.log('Step 5: Timestamp saved successfully.')
+    console.log('[Cloudflare] : Timestamp saved successfully.')
 
-    console.log('Cloudflare Complete!')
+    console.log('[Cloudflare] Complete!')
   } catch (error) {
-    console.error('Error:', error)
+    console.error('[Cloudflare] Error:', error)
     process.exit(1)
   }
 }
 
-main()
+export default main

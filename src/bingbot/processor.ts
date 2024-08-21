@@ -1,4 +1,7 @@
 // src/bingbot/processor.ts
+/**
+ * https://www.bing.com/toolbox/bingbot.json
+ */
 import fetch from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
@@ -13,10 +16,10 @@ const ipv6OutputFilePath = path.join('bingbot', 'ipv6.txt')
 const removeFileIfExists = async (filePath: string): Promise<void> => {
   try {
     await fs.unlink(filePath)
-    console.log(`Step 0: File ${filePath} removed successfully.`)
+    console.log(`[Bingbot] File ${filePath} removed successfully.`)
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-      console.log(`Step 0: File ${filePath} does not exist. Skip.`)
+      console.log(`[Bingbot] File ${filePath} does not exist. Skip.`)
     } else {
       throw err
     }
@@ -29,7 +32,7 @@ const fetchAndProcessBingBotData = async (): Promise<void> => {
   const response = await fetch(url)
 
   if (!response.ok) {
-    throw new Error('Error: Failed to fetch data from BingBot API.')
+    throw new Error('[Bingbot] Error: Failed to fetch data from BingBot API.')
   }
 
   const data = (await response.json()) as BingBotIpRanges
@@ -46,26 +49,30 @@ const fetchAndProcessBingBotData = async (): Promise<void> => {
       .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
       .join('\n')
   )
-  console.log('Step 2: IPv4 addresses saved successfully.')
+  console.log('[Bingbot] IPv4 addresses saved successfully.')
 
   // Extract IPv6 addresses
   const ipv6Addresses = data.prefixes
     .map((item) => item.ipv6Prefix)
     .filter((ip): ip is string => typeof ip === 'string')
 
-  // Save IPv6 addresses
-  await fs.writeFile(
-    ipv6OutputFilePath,
-    Array.from(new Set(ipv6Addresses))
-      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
-      .join('\n')
-  )
-  console.log('Step 3: IPv6 addresses saved successfully.')
+  if (ipv6Addresses.length > 0) {
+    // Save IPv6 addresses if they exist
+    await fs.writeFile(
+      ipv6OutputFilePath,
+      Array.from(new Set(ipv6Addresses))
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+        .join('\n')
+    )
+    console.log('[Bingbot] IPv6 addresses saved successfully.')
+  } else {
+    console.log('[Bingbot] No IPv6 addresses found. Skipping IPv6 file creation.')
+  }
 
   // Save timestamp
   const timestamp = new Date().toISOString().replace('.000Z', '.000000Z')
   await fs.writeFile(timestampFilePath, timestamp)
-  console.log('Step 4: Timestamp saved successfully.')
+  console.log('[Bingbot] Timestamp saved successfully.')
 }
 
 // Main function
@@ -73,11 +80,11 @@ const main = async (): Promise<void> => {
   try {
     await removeFileIfExists(timestampFilePath)
     await fetchAndProcessBingBotData()
-    console.log('BingBot Complete!')
+    console.log('[Bingbot] Complete!')
   } catch (error) {
     console.error('Error:', error)
     process.exit(1)
   }
 }
 
-main()
+export default main
