@@ -22,11 +22,11 @@ This script simplifies the organization of publicly available IP addresses gathe
 3. Execute the script to recursively search for the specified files in the current directory and its subdirectories.
 
 ```bash
-"build-m": "tsc && node main.js -m ipv4.txt ipv6.txt"
+"build-m": "tsc && node dist/main.js -m ipv4.txt ipv6.txt"
 ```
 
 ```bash
-"build-c": "tsc && node main.js -c ipv4.txt ipv6.txt"
+"build-c": "tsc && node dist/main.js -c ipv4.txt ipv6.txt"
 ```
 
 4. The merged IP address lists will be saved in new files with the designated `\_mini` or `\_comma` suffix.
