@@ -24,3 +24,17 @@ export type FileProcessFunction = (
 export interface AddressMergeResult {
   mergedAddresses: string[]
 }
+
+export interface AwsIpRanges {
+  createDate: string
+  prefixes: {
+    ip_prefix: string
+    region: string
+    service: string
+  }[]
+  ipv6_prefixes: {
+    ipv6_prefix: string
+    region: string
+    service: string
+  }[]
+}
