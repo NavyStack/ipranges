@@ -65,8 +65,4 @@ wait
 # Consolidate files for all regions
 consolidate_files
 
-# timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.000000Z")
-# echo "$timestamp" > "$timestamp_file"
-# echo "Timestamp saved successfully."
-
 echo "Azure Complete!"
