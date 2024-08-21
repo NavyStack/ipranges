@@ -40,7 +40,9 @@ const fetchData = async (
       clearTimeout(id)
 
       if (!response.ok) {
-        throw new Error(`[Azure] Failed to fetch ${url}, Status: ${response.status}`)
+        throw new Error(
+          `[Azure] Failed to fetch ${url}, Status: ${response.status}`
+        )
       }
 
       return await response.text()

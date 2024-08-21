@@ -113,7 +113,11 @@ const saveAddressesToFile = async (addresses: GoogleAddressFiles) => {
     saveToCombinedFiles(addresses)
   ])
 
-  console.log('[Google] IP ranges have been saved to the', GOOGLE_DIR, 'directory.')
+  console.log(
+    '[Google] IP ranges have been saved to the',
+    GOOGLE_DIR,
+    'directory.'
+  )
 }
 
 // Utility function to save IPs to category directories

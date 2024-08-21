@@ -66,7 +66,9 @@ const fetchAndProcessBingBotData = async (): Promise<void> => {
     )
     console.log('[Bingbot] IPv6 addresses saved successfully.')
   } else {
-    console.log('[Bingbot] No IPv6 addresses found. Skipping IPv6 file creation.')
+    console.log(
+      '[Bingbot] No IPv6 addresses found. Skipping IPv6 file creation.'
+    )
   }
 
   // Save timestamp
