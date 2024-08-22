@@ -52,6 +52,14 @@ export interface OracleIpRanges {
   regions: OracleRegion[]
 }
 
+export interface VultrSubnet {
+  ip_prefix: string
+}
+
+export interface VultrIpRanges {
+  subnets: VultrSubnet[]
+}
+
 export interface BingBotIpRanges {
   creationTime: string
   prefixes: {

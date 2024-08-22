@@ -7,18 +7,19 @@
 import fetch from 'node-fetch'
 import { promises as fs } from 'fs'
 import path from 'path'
+import { VultrIpRanges } from '../types'
 
 // Define output file paths
 const ipv4Output = path.join('vultr', 'ipv4.txt')
 const ipv6Output = path.join('vultr', 'ipv6.txt')
 
 // Fetch Vultr IP ranges
-const fetchVultrIpRanges = async (): Promise<any> => {
+const fetchVultrIpRanges = async (): Promise<VultrIpRanges> => {
   const response = await fetch('https://geofeed.constant.com/?json')
   if (!response.ok) {
     throw new Error('[Vultr] Failed to fetch IP ranges')
   }
-  return response.json()
+  return response.json() as Promise<VultrIpRanges>
 }
 
 // Utility function to sort IP addresses
@@ -46,7 +47,7 @@ const sortIpAddresses = (lines: string[]): string[] => {
 }
 
 // Process IP ranges
-const processIpRanges = async (data: any): Promise<void> => {
+const processIpRanges = async (data: VultrIpRanges): Promise<void> => {
   const combinedLines: string[] = []
 
   // Extract IP prefixes

@@ -1,6 +1,6 @@
 {
   "name": "navystack-ipranges",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A tool for processing and merging CIDR ranges in IP address files.",
   "type": "module",
   "scripts": {
@@ -22,6 +22,8 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@types/eslint__js": "^8.42.3",
     "@types/node": "^22.4.2",
     "@typescript-eslint/eslint-plugin": "^8.2.0",
     "@typescript-eslint/parser": "^8.2.0",
@@ -31,6 +33,7 @@
     "prettier": "^3.3.3",
     "prettier-plugin-sh": "^0.14.0",
     "tsx": "^4.17.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.2.0"
   }
 }
