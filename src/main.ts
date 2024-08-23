@@ -10,6 +10,7 @@ import googlebotMain from './googlebot/processor'
 import microsoftAzureMain from './microsoft-azure/processor'
 import oracleMain from './oracle/processor'
 import vultrMain from './vultr/processor'
+import linodeMain from './linode/processor'
 
 const runAllProcessors = async () => {
   try {
@@ -24,7 +25,8 @@ const runAllProcessors = async () => {
       googlebotMain(),
       microsoftAzureMain(),
       oracleMain(),
-      vultrMain()
+      vultrMain(),
+      linodeMain()
     ])
 
     console.log('All IP address processors completed successfully.')
