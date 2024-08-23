@@ -33,6 +33,17 @@ This script simplifies the organization of publicly available IP addresses gathe
 
 ## Amazon
 
+```md
+amazon
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+├── ipv6.txt
+├── ipv6_comma.txt
+├── ipv6_mini.txt
+└── timestamp.txt
+```
+
 ### IPv4
 
 ```bash
@@ -63,6 +74,14 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/amazon/ipv6_comma.txt
 
 ## Bingbot
 
+```md
+bingbot
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+└── timestamp.txt
+```
+
 ### IPv4
 
 ```bash
@@ -78,6 +97,17 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/bingbot/ipv4_comma.txt
 ```
 
 ## Cloudflare
+
+```md
+cloudflare
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+├── ipv6.txt
+├── ipv6_comma.txt
+├── ipv6_mini.txt
+└── timestamp.txt
+```
 
 ### IPv4
 
@@ -109,6 +139,16 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/cloudflare/ipv6_comma.
 
 ## Digitalocean
 
+```md
+digitalocean
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+├── ipv6.txt
+├── ipv6_comma.txt
+└── ipv6_mini.txt
+```
+
 ### IPv4
 
 ```bash
@@ -138,6 +178,89 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/digitalocean/ipv6_comm
 ```
 
 ## Github
+
+```md
+github
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+├── ipv6.txt
+├── ipv6_comma.txt
+├── ipv6_mini.txt
+├── timestamp.txt
+├── actions
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ ├── ipv4_mini.txt
+│ ├── ipv6.txt
+│ ├── ipv6_comma.txt
+│ └── ipv6_mini.txt
+├── actions_macos
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ └── ipv4_mini.txt
+├── api
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ ├── ipv4_mini.txt
+│ ├── ipv6.txt
+│ ├── ipv6_comma.txt
+│ └── ipv6_mini.txt
+├── copilot
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ ├── ipv4_mini.txt
+│ ├── ipv6.txt
+│ ├── ipv6_comma.txt
+│ └── ipv6_mini.txt
+├── dependabot
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ └── ipv4_mini.txt
+├── git
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ ├── ipv4_mini.txt
+│ ├── ipv6.txt
+│ ├── ipv6_comma.txt
+│ └── ipv6_mini.txt
+├── github_enterprise_importer
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ ├── ipv4_mini.txt
+│ ├── ipv6.txt
+│ ├── ipv6_comma.txt
+│ └── ipv6_mini.txt
+├── hooks
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ ├── ipv4_mini.txt
+│ ├── ipv6.txt
+│ ├── ipv6_comma.txt
+│ └── ipv6_mini.txt
+├── importer
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ └── ipv4_mini.txt
+├── packages
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ └── ipv4_mini.txt
+├── pages
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ ├── ipv4_mini.txt
+│ ├── ipv6.txt
+│ ├── ipv6_comma.txt
+│ └── ipv6_mini.txt
+└── web
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+├── ipv6.txt
+├── ipv6_comma.txt
+└── ipv6_mini.txt
+```
 
 ### IPv4
 
@@ -169,6 +292,16 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/github/ipv6_comma.txt
 
 ## Googlebot
 
+```md
+googlebot
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+├── ipv6.txt
+├── ipv6_comma.txt
+└── ipv6_mini.txt
+```
+
 ### IPv4
 
 ```bash
@@ -198,6 +331,37 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/googlebot/ipv6_comma.t
 ```
 
 ## Google + Googlebot
+
+```md
+google
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+├── ipv6.txt
+├── ipv6_comma.txt
+├── ipv6_mini.txt
+├── cloud
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ ├── ipv4_mini.txt
+│ ├── ipv6.txt
+│ ├── ipv6_comma.txt
+│ └── ipv6_mini.txt
+├── goog
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ ├── ipv4_mini.txt
+│ ├── ipv6.txt
+│ ├── ipv6_comma.txt
+│ └── ipv6_mini.txt
+└── googlebot
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+├── ipv6.txt
+├── ipv6_comma.txt
+└── ipv6_mini.txt
+```
 
 ### IPv4
 
@@ -259,6 +423,16 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/linode/ipv6_comma.txt
 
 ## Microsoft-Azure (ALL)
 
+```md
+microsoft-azure
+├── all_ipv4.txt
+├── all_ipv4_comma.txt
+├── all_ipv4_mini.txt
+├── all_ipv6.txt
+├── all_ipv6_comma.txt
+├── all_ipv6_mini.txt
+```
+
 ### IPv4
 
 ```bash
@@ -288,6 +462,17 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/all_ip
 ```
 
 ## Microsoft-Azure (China)
+
+```md
+china
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ ├── ipv4_mini.txt
+│ ├── ipv6.txt
+│ ├── ipv6_comma.txt
+│ ├── ipv6_mini.txt
+│ └── timestamp.txt
+```
 
 ### IPv4
 
@@ -319,6 +504,17 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/china/
 
 ## Microsoft-Azure (Germany)
 
+```md
+germany
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ ├── ipv4_mini.txt
+│ ├── ipv6.txt
+│ ├── ipv6_comma.txt
+│ ├── ipv6_mini.txt
+│ └── timestamp.txt
+```
+
 ### IPv4
 
 ```bash
@@ -348,6 +544,17 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/german
 ```
 
 ## Microsoft-Azure (Public Cloud Only)
+
+```md
+public-cloud
+│ ├── ipv4.txt
+│ ├── ipv4_comma.txt
+│ ├── ipv4_mini.txt
+│ ├── ipv6.txt
+│ ├── ipv6_comma.txt
+│ ├── ipv6_mini.txt
+│ └── timestamp.txt
+```
 
 ### IPv4
 
@@ -379,6 +586,17 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/public
 
 ## Microsoft-Azure (US GOV)
 
+```md
+us-gov
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+├── ipv6.txt
+├── ipv6_comma.txt
+├── ipv6_mini.txt
+└── timestamp.txt
+```
+
 ### IPv4
 
 ```bash
@@ -409,6 +627,14 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/microsoft-azure/us-gov
 
 ## ORACLE (Oracle Cloud Infrastructure(OCI))
 
+```md
+oracle
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+└── timestamp.txt
+```
+
 ### IPv4
 
 ```bash
@@ -424,6 +650,16 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/oracle/ipv4_comma.txt
 ```
 
 ## Vultr
+
+```md
+vultr
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+├── ipv6.txt
+├── ipv6_comma.txt
+└── ipv6_mini.txt
+```
 
 ### IPv4
 
@@ -458,6 +694,16 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/vultr/ipv6_comma.txt
 ## UPtime bot
 
 ## Betterstack
+
+```md
+betterstack
+├── ipv4.txt
+├── ipv4_comma.txt
+├── ipv4_mini.txt
+├── ipv6.txt
+├── ipv6_comma.txt
+└── ipv6_mini.txt
+```
 
 ### IPv4
 
