@@ -1,5 +1,20 @@
 # ipranges
 
+## Important Note:
+
+> [!CAUTION]
+> All IP lists utilized by this script are sourced from public sources.
+
+> [!TIP]
+> Contributions or suggestions for improvement are warmly welcomed!
+
+---
+
+> [!IMPORTANT]
+> All other trademarks are the property of their respective owners, and unless otherwise stated, we do not claim any affiliation, endorsement, or association with the owners or entities of the mentioned trademarks.
+
+---
+
 ## Askfront.com
 
 초보자도 자유롭게 질문할 수 있는 포럼을 만들었습니다. <br />
@@ -9,6 +24,8 @@ NavyStack의 가이드 뿐만 아니라, 아니라 모든 종류의 질문을 �
 그럴 때, 부담 없이 질문해 주세요. 같이 의논하며 생각해봅시다.
 
 [AskFront.com (에스크프론트) 포럼](https://askfront.com/?github)
+
+---
 
 ## IP Address List Merger
 
@@ -716,19 +733,6 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/betterstack/ipv4.txt
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/betterstack/ipv6.txt
 ```
-
-## Important Note:
-
-> [!CAUTION]
-> All IP lists utilized by this script are sourced from public sources.
-
-> [!TIP]
-> Contributions or suggestions for improvement are warmly welcomed!
-
----
-
-> [!IMPORTANT]
-> All other trademarks are the property of their respective owners, and unless otherwise stated, we do not claim any affiliation, endorsement, or association with the owners or entities of the mentioned trademarks.
 
 ---
 
