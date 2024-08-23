@@ -1,6 +1,6 @@
 // src/linode/processor.ts
 
-import fetch from 'node-fetch'
+import fetch, { Response } from 'node-fetch'
 import { promises as fs } from 'fs'
 import path from 'path'
 
