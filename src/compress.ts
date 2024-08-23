@@ -190,6 +190,6 @@ if (processOptionsMap[processOption] && filesToProcess.length >= 1) {
     )
 } else {
   console.error(
-    'Invalid command. Please use: tsc && node dist/main.js [-m | -c] file1.txt [file2.txt ...]'
+    'Invalid command. Please use: tsc && node dist/compress.js [-m | -c] file1.txt [file2.txt ...]'
   )
 }
