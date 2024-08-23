@@ -1,7 +1,9 @@
 // src/github/processor.ts
+
 /**
  * https://api.github.com/meta
  */
+
 import fetch from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
@@ -28,6 +30,40 @@ const ADDRESS_KEYS: Array<keyof GithubApiResponse> = [
   'copilot'
 ]
 
+// Utility function to sort IP addresses
+const sortIpAddresses = (addresses: string[]): string[] => {
+  return addresses.sort((a, b) => {
+    // Determine if addresses are IPv4 or IPv6
+    const isIPv4 = (addr: string) => !addr.includes(':')
+
+    if (isIPv4(a) && isIPv4(b)) {
+      // Sort IPv4 addresses numerically
+      const aParts = a.split('.').map(Number)
+      const bParts = b.split('.').map(Number)
+
+      for (let i = 0; i < 4; i++) {
+        if (aParts[i] !== bParts[i]) {
+          return aParts[i] - bParts[i]
+        }
+      }
+      return 0
+    }
+
+    if (isIPv4(a) && !isIPv4(b)) {
+      // IPv4 addresses should come before IPv6 addresses
+      return -1
+    }
+
+    if (!isIPv4(a) && isIPv4(b)) {
+      // IPv6 addresses should come after IPv4 addresses
+      return 1
+    }
+
+    // Sort IPv6 addresses lexicographically
+    return a.localeCompare(b)
+  })
+}
+
 // Utility function to save addresses to files in separate directories
 const saveAddressesToFile = async (
   addresses: { [key: string]: string[] },
@@ -38,14 +74,14 @@ const saveAddressesToFile = async (
       const dirPath = path.join('github', key)
       await fs.mkdir(dirPath, { recursive: true })
       const filePath = path.join(dirPath, `${addressType}.txt`)
-      await fs.writeFile(filePath, addressList.sort().join('\n'))
+      await fs.writeFile(filePath, sortIpAddresses(addressList).join('\n'))
       console.log(`[Github] Addresses for ${key} saved to ${filePath}`)
     }
   )
   await Promise.all(writePromises)
 }
 
-// Utility function to sort and separate addresses
+// Utility function to process and sort IP addresses
 const processAddresses = (data: GithubApiResponse) => {
   const ipv4Addresses: Set<string> = new Set()
   const ipv6Addresses: Set<string> = new Set()
@@ -98,8 +134,14 @@ const fetchAndProcessGithubData = async (): Promise<void> => {
   await Promise.all([
     saveAddressesToFile(ipv4Files, 'ipv4'),
     saveAddressesToFile(ipv6Files, 'ipv6'),
-    fs.writeFile(GITHUB_IPV4_FILE_PATH, ipv4Addresses.sort().join('\n')),
-    fs.writeFile(GITHUB_IPV6_FILE_PATH, ipv6Addresses.sort().join('\n')),
+    fs.writeFile(
+      GITHUB_IPV4_FILE_PATH,
+      sortIpAddresses(ipv4Addresses).join('\n')
+    ),
+    fs.writeFile(
+      GITHUB_IPV6_FILE_PATH,
+      sortIpAddresses(ipv6Addresses).join('\n')
+    ),
     fs.writeFile(
       TIMESTAMP_FILE_PATH,
       new Date().toISOString().replace('.000Z', '.000000Z')
@@ -113,7 +155,7 @@ const fetchAndProcessGithubData = async (): Promise<void> => {
 const main = async (): Promise<void> => {
   try {
     await fetchAndProcessGithubData()
-    console.log('[Github] data processing complete!')
+    console.log('[Github] Data processing complete!')
   } catch (error) {
     console.error('[Github] Error:', error)
     process.exit(1)

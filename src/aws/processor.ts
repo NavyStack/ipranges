@@ -1,7 +1,9 @@
 // src/aws/processor.ts
+
 /*
  * https://docs.aws.amazon.com/general/latest/gr/aws-ip-ranges.html
  */
+
 import fetch from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
@@ -11,6 +13,40 @@ import { AwsIpRanges } from '../types'
 const ipv4Output = path.join('amazon', 'ipv4.txt')
 const ipv6Output = path.join('amazon', 'ipv6.txt')
 const timestampFile = path.join('amazon', 'timestamp.txt')
+
+// Utility function to sort IP addresses
+const sortIpAddresses = (addresses: string[]): string[] => {
+  return addresses.sort((a, b) => {
+    // Determine if addresses are IPv4 or IPv6
+    const isIPv4 = (addr: string) => !addr.includes(':')
+
+    if (isIPv4(a) && isIPv4(b)) {
+      // Sort IPv4 addresses numerically
+      const aParts = a.split('/')[0].split('.').map(Number)
+      const bParts = b.split('/')[0].split('.').map(Number)
+
+      for (let i = 0; i < 4; i++) {
+        if (aParts[i] !== bParts[i]) {
+          return aParts[i] - bParts[i]
+        }
+      }
+      return 0
+    }
+
+    if (isIPv4(a) && !isIPv4(b)) {
+      // IPv4 addresses should come before IPv6 addresses
+      return -1
+    }
+
+    if (!isIPv4(a) && isIPv4(b)) {
+      // IPv6 addresses should come after IPv4 addresses
+      return 1
+    }
+
+    // Sort IPv6 addresses lexicographically
+    return a.localeCompare(b)
+  })
+}
 
 // Fetch AWS IP ranges
 const fetchAwsIpRanges = async (): Promise<void> => {
@@ -35,19 +71,8 @@ const fetchAwsIpRanges = async (): Promise<void> => {
     .filter(Boolean)
 
   // Sort and remove duplicates
-  const sortAndUnique = (arr: string[]): string[] => {
-    return Array.from(new Set(arr)).sort((a, b) => {
-      // Compare IPv4 addresses numerically
-      if (!a.includes(':') && !b.includes(':')) {
-        return a.localeCompare(b, undefined, { numeric: true })
-      }
-      // Compare IPv6 addresses lexicographically
-      return a.localeCompare(b)
-    })
-  }
-
-  const sortedIpv4 = sortAndUnique(ipv4Prefixes)
-  const sortedIpv6 = sortAndUnique(ipv6Prefixes)
+  const sortedIpv4 = sortIpAddresses(Array.from(new Set(ipv4Prefixes)))
+  const sortedIpv6 = sortIpAddresses(Array.from(new Set(ipv6Prefixes)))
 
   // Write to output files
   await fs.writeFile(ipv4Output, sortedIpv4.join('\n'))

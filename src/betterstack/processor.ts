@@ -11,6 +11,31 @@ const ipv6Output = path.join('betterstack', 'ipv6.txt')
 // Define BetterStack URL
 const betterstackUrl = 'https://uptime.betterstack.com/ips.txt'
 
+// Helper function to sort IPv4 addresses numerically
+const sortIpv4Addresses = (addresses: string[]): string[] => {
+  return addresses.sort((a, b) => {
+    const aParts = a.split('.').map(Number)
+    const bParts = b.split('.').map(Number)
+    for (let i = 0; i < 4; i++) {
+      if (aParts[i] !== bParts[i]) {
+        return aParts[i] - bParts[i]
+      }
+    }
+    return 0
+  })
+}
+
+// Helper function to sort IPv6 addresses lexicographically
+const sortIpv6Addresses = (addresses: string[]): string[] => {
+  return addresses.sort((a, b) => a.localeCompare(b))
+}
+
+// Helper function to sort and remove duplicates
+const sortAndUnique = (arr: string[], isIPv4: boolean): string[] => {
+  const uniqueArr = Array.from(new Set(arr))
+  return isIPv4 ? sortIpv4Addresses(uniqueArr) : sortIpv6Addresses(uniqueArr)
+}
+
 // Fetch IP ranges and save to file
 const fetchBetterstackIps = async (): Promise<void> => {
   const response = await fetch(betterstackUrl)
@@ -31,19 +56,8 @@ const fetchBetterstackIps = async (): Promise<void> => {
   const ipv6Addresses = lines.filter((line) => line.includes(':'))
 
   // Sort and remove duplicates
-  const sortAndUnique = (arr: string[]): string[] => {
-    return Array.from(new Set(arr)).sort((a, b) => {
-      // Compare IPv4 addresses numerically
-      if (!a.includes(':') && !b.includes(':')) {
-        return a.localeCompare(b, undefined, { numeric: true })
-      }
-      // Compare IPv6 addresses lexicographically
-      return a.localeCompare(b)
-    })
-  }
-
-  const sortedIpv4 = sortAndUnique(ipv4Addresses)
-  const sortedIpv6 = sortAndUnique(ipv6Addresses)
+  const sortedIpv4 = sortAndUnique(ipv4Addresses, true)
+  const sortedIpv6 = sortAndUnique(ipv6Addresses, false)
 
   // Write to output files
   await fs.writeFile(ipv4Output, sortedIpv4.join('\n'))

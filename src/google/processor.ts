@@ -1,9 +1,11 @@
 // src/google/processor.ts
+
 /**
  * https://www.gstatic.com/ipranges/goog.txt
  * https://www.gstatic.com/ipranges/cloud.json
  * https://developers.google.com/search/apis/ipranges/googlebot.json
  */
+
 import fetch from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
@@ -53,12 +55,35 @@ const extractAddresses = (text: string, isIPv6: boolean) => {
   )
 }
 
+// Utility function to sort IP addresses
+const sortIpAddresses = (lines: string[]): string[] => {
+  return lines.sort((a, b) => {
+    if (a.includes(':') && b.includes(':')) {
+      // Sort IPv6 addresses lexicographically
+      return a.localeCompare(b)
+    } else if (!a.includes(':') && !b.includes(':')) {
+      // Sort IPv4 addresses numerically
+      const aParts = a.split('/')[0].split('.').map(Number)
+      const bParts = b.split('/')[0].split('.').map(Number)
+      for (let i = 0; i < 4; i++) {
+        if (aParts[i] !== bParts[i]) {
+          return aParts[i] - bParts[i]
+        }
+      }
+      return 0
+    } else {
+      // IPv4 addresses should come before IPv6 addresses
+      return a.includes(':') ? 1 : -1
+    }
+  })
+}
+
 // Utility function to process IP ranges
 const processIpRanges = (data: {
   googText: string
   cloudJson: GoogleCloudIpRanges
   googlebotJson: GooglebotIpRanges
-}) => {
+}): GoogleAddressFiles => {
   const { ipv4, ipv6 } = extractAddresses(data.googText, false)
   const cloudAddresses = data.cloudJson.prefixes || []
   const googlebotAddresses = data.googlebotJson.prefixes || []
@@ -82,20 +107,18 @@ const processIpRanges = (data: {
   googlebotIpv6.forEach((ip) => ipv6.add(ip))
 
   return {
-    ipv4Addresses: Array.from(ipv4).sort(),
-    ipv6Addresses: Array.from(ipv6).sort(),
-    cloudIpv4: cloudIpv4.join('\n'),
-    cloudIpv6: cloudIpv6.join('\n'),
-    googlebotIpv4: googlebotIpv4.join('\n'),
-    googlebotIpv6: googlebotIpv6.join('\n'),
-    googIpv4: data.googText
-      .split('\n')
-      .filter((line) => !line.includes(':'))
-      .join('\n'),
-    googIpv6: data.googText
-      .split('\n')
-      .filter((line) => line.includes(':'))
-      .join('\n')
+    ipv4Addresses: sortIpAddresses(Array.from(ipv4)),
+    ipv6Addresses: sortIpAddresses(Array.from(ipv6)),
+    cloudIpv4: sortIpAddresses(cloudIpv4).join('\n'),
+    cloudIpv6: sortIpAddresses(cloudIpv6).join('\n'),
+    googlebotIpv4: sortIpAddresses(googlebotIpv4).join('\n'),
+    googlebotIpv6: sortIpAddresses(googlebotIpv6).join('\n'),
+    googIpv4: sortIpAddresses(
+      data.googText.split('\n').filter((line) => !line.includes(':'))
+    ).join('\n'),
+    googIpv6: sortIpAddresses(
+      data.googText.split('\n').filter((line) => line.includes(':'))
+    ).join('\n')
   }
 }
 

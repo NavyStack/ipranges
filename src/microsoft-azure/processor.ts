@@ -7,7 +7,7 @@
  */
 
 import fetch from 'node-fetch'
-import fs from 'fs/promises'
+import { promises as fs } from 'fs'
 import path from 'path'
 import { MicrosoftIpRanges } from '../types'
 
@@ -93,6 +93,29 @@ const parseIpRanges = (
   }
 }
 
+// Sort IP addresses numerically for IPv4 and lexicographically for IPv6
+const sortIpAddresses = (lines: string[]): string[] => {
+  return lines.sort((a, b) => {
+    if (a.includes(':') && b.includes(':')) {
+      // Sort IPv6 addresses lexicographically
+      return a.localeCompare(b)
+    } else if (!a.includes(':') && !b.includes(':')) {
+      // Sort IPv4 addresses numerically
+      const aParts = a.split('/')[0].split('.').map(Number)
+      const bParts = b.split('/')[0].split('.').map(Number)
+      for (let i = 0; i < 4; i++) {
+        if (aParts[i] !== bParts[i]) {
+          return aParts[i] - bParts[i]
+        }
+      }
+      return 0
+    } else {
+      // IPv4 addresses should come before IPv6 addresses
+      return a.includes(':') ? 1 : -1
+    }
+  })
+}
+
 // Download, parse, and save IP ranges for a region
 const downloadAndParseBackground = async (
   regionId: string,
@@ -119,9 +142,13 @@ const downloadAndParseBackground = async (
   const jsonData = await fetchData(downloadUrl)
   const { ipv4Addresses, ipv6Addresses } = parseIpRanges(jsonData)
 
-  // Save addresses and timestamp
-  await fs.writeFile(path.join(outputDir, 'ipv4.txt'), ipv4Addresses.join('\n'))
-  await fs.writeFile(path.join(outputDir, 'ipv6.txt'), ipv6Addresses.join('\n'))
+  // Sort IP addresses and save them to output files
+  const sortedIpv4 = sortIpAddresses(ipv4Addresses)
+  const sortedIpv6 = sortIpAddresses(ipv6Addresses)
+
+  // Write addresses to output files
+  await fs.writeFile(path.join(outputDir, 'ipv4.txt'), sortedIpv4.join('\n'))
+  await fs.writeFile(path.join(outputDir, 'ipv6.txt'), sortedIpv6.join('\n'))
   await fs.writeFile(path.join(outputDir, 'timestamp.txt'), timestamp)
 }
 
@@ -141,13 +168,17 @@ const consolidateFiles = async () => {
     ipv6Content.split('\n').forEach((line) => allIpv6Addresses.add(line.trim()))
   }
 
+  // Sort and remove duplicates
+  const sortedIpv4 = sortIpAddresses(Array.from(allIpv4Addresses))
+  const sortedIpv6 = sortIpAddresses(Array.from(allIpv6Addresses))
+
   await fs.writeFile(
     path.join(OUTPUT_DIR, 'all_ipv4.txt'),
-    Array.from(allIpv4Addresses).join('\n')
+    sortedIpv4.join('\n')
   )
   await fs.writeFile(
     path.join(OUTPUT_DIR, 'all_ipv6.txt'),
-    Array.from(allIpv6Addresses).join('\n')
+    sortedIpv6.join('\n')
   )
 }
 

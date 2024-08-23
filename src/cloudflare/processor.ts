@@ -20,7 +20,9 @@ const removeFileIfExists = async (filePath: string): Promise<void> => {
     console.log(`[Cloudflare] ${filePath} removed successfully.`)
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-      console.log(`[Cloudflare] : File ${filePath} does not exist. Skip.`)
+      console.log(
+        `[Cloudflare] File ${filePath} does not exist. Skipping removal.`
+      )
     } else {
       throw err
     }
@@ -50,13 +52,36 @@ const fetchCloudflareIpRanges = async (): Promise<CloudflareIpRanges> => {
   }
 }
 
+// Function to sort IP addresses
+const sortIpAddresses = (addresses: string[], isIPv4: boolean): string[] => {
+  return addresses.sort((a, b) => {
+    if (isIPv4) {
+      // Compare IPv4 addresses numerically
+      const aParts = a.split('.').map(Number)
+      const bParts = b.split('.').map(Number)
+      for (let i = 0; i < 4; i++) {
+        if (aParts[i] !== bParts[i]) {
+          return aParts[i] - bParts[i]
+        }
+      }
+      return 0
+    } else {
+      // Compare IPv6 addresses lexicographically
+      return a.localeCompare(b)
+    }
+  })
+}
+
 // Function to process and save IP addresses
 const processAndSaveIpAddresses = async (
   ipAddresses: string[],
-  outputFilePath: string
+  outputFilePath: string,
+  isIPv4: boolean
 ): Promise<void> => {
-  const sortedUniqueIps = Array.from(new Set(ipAddresses)).sort((a, b) =>
-    a.localeCompare(b, undefined, { numeric: true })
+  // Remove duplicates and sort addresses
+  const sortedUniqueIps = sortIpAddresses(
+    Array.from(new Set(ipAddresses)),
+    isIPv4
   )
   await fs.writeFile(outputFilePath, sortedUniqueIps.join('\n'))
   console.log(
@@ -71,12 +96,12 @@ const main = async (): Promise<void> => {
 
     const { ipv4, ipv6 } = await fetchCloudflareIpRanges()
 
-    await processAndSaveIpAddresses(ipv4, ipv4Output)
-    await processAndSaveIpAddresses(ipv6, ipv6Output)
+    await processAndSaveIpAddresses(ipv4, ipv4Output, true)
+    await processAndSaveIpAddresses(ipv6, ipv6Output, false)
 
     const timestamp = new Date().toISOString()
     await fs.writeFile(timestampFile, timestamp)
-    console.log('[Cloudflare] : Timestamp saved successfully.')
+    console.log('[Cloudflare] Timestamp saved successfully.')
 
     console.log('[Cloudflare] Complete!')
   } catch (error) {

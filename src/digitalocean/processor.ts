@@ -4,6 +4,7 @@
  * From: https://github.com/nccgroup/cloud_ip_ranges
  * https://github.com/nccgroup/cloud_ip_ranges/blob/24c34811976763b5fa7911ec69b961e671b76e34/cloud_ip_ranges.py#L100
  */
+
 import { promises as fs } from 'fs'
 import path from 'path'
 import fetch from 'node-fetch'
@@ -32,26 +33,36 @@ const fetchDigitalOceanIpRanges = async (): Promise<string[]> => {
 }
 
 // Utility function to sort IP addresses
-const sortIpAddresses = (lines: string[]): string[] => {
-  return lines.sort((a, b) => {
-    // IPv4 and IPv6 are handled differently
-    if (a.includes(':') && b.includes(':')) {
-      // Sort IPv6 addresses lexicographically
-      return a.localeCompare(b)
-    } else if (!a.includes(':') && !b.includes(':')) {
+const sortIpAddresses = (addresses: string[]): string[] => {
+  return addresses.sort((a, b) => {
+    // Determine if addresses are IPv4 or IPv6
+    const isIPv4 = (addr: string) => !addr.includes(':')
+
+    if (isIPv4(a) && isIPv4(b)) {
       // Sort IPv4 addresses numerically
       const aParts = a.split('.').map(Number)
       const bParts = b.split('.').map(Number)
+
       for (let i = 0; i < 4; i++) {
         if (aParts[i] !== bParts[i]) {
           return aParts[i] - bParts[i]
         }
       }
       return 0
-    } else {
-      // IPv4 addresses should come before IPv6 addresses
-      return a.includes(':') ? 1 : -1
     }
+
+    if (isIPv4(a) && !isIPv4(b)) {
+      // IPv4 addresses should come before IPv6 addresses
+      return -1
+    }
+
+    if (!isIPv4(a) && isIPv4(b)) {
+      // IPv6 addresses should come after IPv4 addresses
+      return 1
+    }
+
+    // Sort IPv6 addresses lexicographically
+    return a.localeCompare(b)
   })
 }
 
@@ -62,8 +73,8 @@ const processIpRanges = async (lines: string[]): Promise<void> => {
   const ipv6Lines = lines.filter((line) => line.includes(':'))
 
   // Sort and remove duplicates
-  const sortedIpv4 = sortIpAddresses(ipv4Lines)
-  const sortedIpv6 = sortIpAddresses(ipv6Lines)
+  const sortedIpv4 = sortIpAddresses([...new Set(ipv4Lines)])
+  const sortedIpv6 = sortIpAddresses([...new Set(ipv6Lines)])
 
   // Write to output files
   await fs.writeFile(ipv4Output, sortedIpv4.join('\n'))

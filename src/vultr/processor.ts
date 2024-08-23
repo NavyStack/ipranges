@@ -22,28 +22,30 @@ const fetchVultrIpRanges = async (): Promise<VultrIpRanges> => {
   return response.json() as Promise<VultrIpRanges>
 }
 
-// Utility function to sort IP addresses
-const sortIpAddresses = (lines: string[]): string[] => {
-  return lines.sort((a, b) => {
-    // IPv4 and IPv6 are handled differently
-    if (a.includes(':') && b.includes(':')) {
-      // Sort IPv6 addresses lexicographically
-      return a.localeCompare(b)
-    } else if (!a.includes(':') && !b.includes(':')) {
-      // Sort IPv4 addresses numerically
-      const aParts = a.split('/')[0].split('.').map(Number)
-      const bParts = b.split('/')[0].split('.').map(Number)
-      for (let i = 0; i < 4; i++) {
-        if (aParts[i] !== bParts[i]) {
-          return aParts[i] - bParts[i]
-        }
+// Utility function to sort IPv4 addresses numerically
+const sortIpv4Addresses = (addresses: string[]): string[] => {
+  return addresses.sort((a, b) => {
+    // Remove CIDR suffix for sorting
+    const aParts = a.split('/')[0].split('.').map(Number)
+    const bParts = b.split('/')[0].split('.').map(Number)
+    for (let i = 0; i < 4; i++) {
+      if (aParts[i] !== bParts[i]) {
+        return aParts[i] - bParts[i]
       }
-      return 0
-    } else {
-      // IPv4 addresses should come before IPv6 addresses
-      return a.includes(':') ? 1 : -1
     }
+    return 0
   })
+}
+
+// Utility function to sort IPv6 addresses lexicographically
+const sortIpv6Addresses = (addresses: string[]): string[] => {
+  return addresses.sort((a, b) => a.localeCompare(b))
+}
+
+// Utility function to sort and remove duplicates
+const sortAndUnique = (arr: string[], isIPv4: boolean): string[] => {
+  const uniqueArr = Array.from(new Set(arr))
+  return isIPv4 ? sortIpv4Addresses(uniqueArr) : sortIpv6Addresses(uniqueArr)
 }
 
 // Process IP ranges
@@ -66,8 +68,8 @@ const processIpRanges = async (data: VultrIpRanges): Promise<void> => {
   )
 
   // Sort and remove duplicates
-  const sortedIpv4 = sortIpAddresses(ipv4Lines)
-  const sortedIpv6 = sortIpAddresses(ipv6Lines)
+  const sortedIpv4 = sortAndUnique(ipv4Lines, true)
+  const sortedIpv6 = sortAndUnique(ipv6Lines, false)
 
   // Write to output files
   await fs.writeFile(ipv4Output, sortedIpv4.join('\n'))

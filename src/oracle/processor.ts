@@ -3,7 +3,7 @@
  * https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json
  */
 import fetch from 'node-fetch'
-import fs from 'fs/promises'
+import { promises as fs } from 'fs'
 import path from 'path'
 import { OracleIpRanges } from '../types'
 
@@ -57,9 +57,17 @@ const fetchOracleIpRanges = async (): Promise<void> => {
   }
 
   // Sort and remove duplicates
-  const sortedIpv4 = Array.from(new Set(ipv4Addresses)).sort((a, b) =>
-    a.localeCompare(b, undefined, { numeric: true })
-  )
+  const sortedIpv4 = Array.from(new Set(ipv4Addresses)).sort((a, b) => {
+    // Split and pad parts to ensure numeric comparison for IPv4
+    const aParts = a.split('/')[0].split('.').map(Number)
+    const bParts = b.split('/')[0].split('.').map(Number)
+    for (let i = 0; i < 4; i++) {
+      if (aParts[i] !== bParts[i]) {
+        return aParts[i] - bParts[i]
+      }
+    }
+    return 0
+  })
 
   // Write IPv4 addresses to output file
   await fs.writeFile(ipv4Output, sortedIpv4.join('\n'))
