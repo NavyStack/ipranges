@@ -1,5 +1,19 @@
 # ipranges
 
+## Important Note:
+
+> [!CAUTION]
+> All IP lists utilized by this script are sourced from public sources.
+
+> [!TIP]
+> Contributions or suggestions for improvement are warmly welcomed!
+
+---
+
+> [!IMPORTANT]
+> All other trademarks are the property of their respective owners, and unless otherwise stated, we do not claim any affiliation, endorsement, or association with the owners or entities of the mentioned trademarks.
+
+---
 ## Askfront.com
 
 초보자도 자유롭게 질문할 수 있는 포럼을 만들었습니다. <br />
@@ -716,21 +730,6 @@ https://raw.githubusercontent.com/NavyStack/ipranges/main/betterstack/ipv4.txt
 ```bash
 https://raw.githubusercontent.com/NavyStack/ipranges/main/betterstack/ipv6.txt
 ```
-
-## Important Note:
-
-> [!CAUTION]
-> All IP lists utilized by this script are sourced from public sources.
-
-> [!TIP]
-> Contributions or suggestions for improvement are warmly welcomed!
-
----
-
-> [!IMPORTANT]
-> All other trademarks are the property of their respective owners, and unless otherwise stated, we do not claim any affiliation, endorsement, or association with the owners or entities of the mentioned trademarks.
-
----
 
 ## ETC.
 
