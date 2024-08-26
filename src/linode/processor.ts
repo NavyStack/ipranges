@@ -1,6 +1,4 @@
-// src/linode/processor.ts
-
-import fetch from 'node-fetch'
+import fetch, { RequestInit } from 'node-fetch'
 import { promises as fs } from 'fs'
 import path from 'path'
 
@@ -8,19 +6,48 @@ import path from 'path'
 const ipv4Output = path.join('linode', 'ipv4.txt')
 const ipv6Output = path.join('linode', 'ipv6.txt')
 
-// Fetch Linode IP ranges
-const fetchLinodeIpRanges = async (): Promise<string[]> => {
+// Fetch Linode IP ranges with retry and timeout logic
+const fetchLinodeIpRanges = async (
+  retries: number = 3,
+  timeout: number = 10000
+): Promise<string[]> => {
   const linodeUrl = 'https://geoip.linode.com/'
-  const response = await fetch(linodeUrl)
-  if (!response.ok) {
-    throw new Error('[Linode] Failed to fetch IP ranges')
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController()
+      const id = setTimeout(() => controller.abort(), timeout)
+      const response = await fetch(linodeUrl, {
+        signal: controller.signal
+      } as RequestInit)
+      clearTimeout(id)
+
+      if (!response.ok) {
+        const errorText = await response.text() // Get the response body text in case of error
+        throw new Error(
+          `[Linode] Failed to fetch IP ranges. Status: ${response.status}, Response: ${errorText}`
+        )
+      }
+
+      const data = await response.text()
+      // Filter out comments and extract only the IP ranges
+      return data
+        .split('\n')
+        .map((line) => line.split(',')[0])
+        .filter((line) => line && !line.startsWith('#'))
+    } catch (error) {
+      if (attempt === retries) {
+        throw new Error(
+          `[Linode] Fetch failed after ${retries} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`
+        )
+      }
+      console.warn(
+        `[Linode] Fetch attempt ${attempt} failed: ${error instanceof Error ? error.message : 'Unknown error'}. Retrying in ${timeout / 1000} seconds...`
+      )
+      await new Promise((resolve) => setTimeout(resolve, timeout))
+    }
   }
-  const data = await response.text()
-  // Filter out comments and extract only the IP ranges
-  return data
-    .split('\n')
-    .map((line) => line.split(',')[0])
-    .filter((line) => line && !line.startsWith('#'))
+  throw new Error(`[Linode] Fetch failed after ${retries} attempts`) // This line should theoretically never be reached
 }
 
 // Utility function to sort and filter IP addresses

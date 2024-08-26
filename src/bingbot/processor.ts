@@ -2,15 +2,15 @@
 /**
  * https://www.bing.com/toolbox/bingbot.json
  */
-import fetch from 'node-fetch'
+import fetch, { RequestInit } from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
 import { BingBotIpRanges } from '../types'
 
 // Define file paths
-const timestampFilePath = path.join('bingbot', 'timestamp.txt')
-const ipv4OutputFilePath = path.join('bingbot', 'ipv4.txt')
-const ipv6OutputFilePath = path.join('bingbot', 'ipv6.txt')
+const TIMESTAMP_FILE_PATH = path.join('bingbot', 'timestamp.txt')
+const IPV4_OUTPUT_FILE_PATH = path.join('bingbot', 'ipv4.txt')
+const IPV6_OUTPUT_FILE_PATH = path.join('bingbot', 'ipv6.txt')
 
 // Function to remove a file if it exists
 const removeFileIfExists = async (filePath: string): Promise<void> => {
@@ -26,16 +26,45 @@ const removeFileIfExists = async (filePath: string): Promise<void> => {
   }
 }
 
+// Function to fetch data with retry and timeout
+const fetchWithRetryAndTimeout = async (
+  url: string,
+  retries: number = 3,
+  timeout: number = 10000
+): Promise<BingBotIpRanges> => {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController()
+      const id = setTimeout(() => controller.abort(), timeout)
+      const response = await fetch(url, {
+        signal: controller.signal
+      } as RequestInit)
+
+      clearTimeout(id)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${url}: ${response.statusText}`)
+      }
+
+      return (await response.json()) as BingBotIpRanges
+    } catch (error) {
+      if (attempt === retries) {
+        throw new Error(
+          `Fetch failed for ${url} after ${retries} attempts: ${error.message}`
+        )
+      }
+      console.warn(
+        `Fetch attempt ${attempt} for ${url} failed: ${error.message}. Retrying in ${timeout / 1000} seconds...`
+      )
+      await new Promise((resolve) => setTimeout(resolve, timeout))
+    }
+  }
+}
+
 // Function to fetch BingBot IP ranges and process data
 const fetchAndProcessBingBotData = async (): Promise<void> => {
   const url = 'https://www.bing.com/toolbox/bingbot.json'
-  const response = await fetch(url)
-
-  if (!response.ok) {
-    throw new Error('[Bingbot] Error: Failed to fetch data from BingBot API.')
-  }
-
-  const data = (await response.json()) as BingBotIpRanges
+  const data = await fetchWithRetryAndTimeout(url)
 
   // Extract IPv4 addresses
   const ipv4Addresses = data.prefixes
@@ -44,7 +73,7 @@ const fetchAndProcessBingBotData = async (): Promise<void> => {
 
   // Save IPv4 addresses
   await fs.writeFile(
-    ipv4OutputFilePath,
+    IPV4_OUTPUT_FILE_PATH,
     Array.from(new Set(ipv4Addresses))
       .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
       .join('\n')
@@ -59,7 +88,7 @@ const fetchAndProcessBingBotData = async (): Promise<void> => {
   if (ipv6Addresses.length > 0) {
     // Save IPv6 addresses if they exist
     await fs.writeFile(
-      ipv6OutputFilePath,
+      IPV6_OUTPUT_FILE_PATH,
       Array.from(new Set(ipv6Addresses))
         .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
         .join('\n')
@@ -73,18 +102,18 @@ const fetchAndProcessBingBotData = async (): Promise<void> => {
 
   // Save timestamp
   const timestamp = new Date().toISOString().replace('.000Z', '.000000Z')
-  await fs.writeFile(timestampFilePath, timestamp)
+  await fs.writeFile(TIMESTAMP_FILE_PATH, timestamp)
   console.log('[Bingbot] Timestamp saved successfully.')
 }
 
 // Main function
 const main = async (): Promise<void> => {
   try {
-    await removeFileIfExists(timestampFilePath)
+    await removeFileIfExists(TIMESTAMP_FILE_PATH)
     await fetchAndProcessBingBotData()
     console.log('[Bingbot] Complete!')
   } catch (error) {
-    console.error('Error:', error)
+    console.error('[Bingbot] Error:', error)
     process.exit(1)
   }
 }

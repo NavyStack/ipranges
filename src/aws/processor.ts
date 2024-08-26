@@ -2,29 +2,59 @@
 /*
  * https://docs.aws.amazon.com/general/latest/gr/aws-ip-ranges.html
  */
-import fetch from 'node-fetch'
+import fetch, { RequestInit } from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
 import { AwsIpRanges } from '../types'
 
 // Define output file paths
-const ipv4Output = path.join('amazon', 'ipv4.txt')
-const ipv6Output = path.join('amazon', 'ipv6.txt')
-const timestampFile = path.join('amazon', 'timestamp.txt')
+const IPV4_OUTPUT = path.join('amazon', 'ipv4.txt')
+const IPV6_OUTPUT = path.join('amazon', 'ipv6.txt')
+const TIMESTAMP_FILE = path.join('amazon', 'timestamp.txt')
+
+// Utility function to fetch data with retry and timeout
+const fetchWithRetryAndTimeout = async (
+  url: string,
+  retries: number = 3,
+  timeout: number = 10000
+): Promise<AwsIpRanges> => {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController()
+      const id = setTimeout(() => controller.abort(), timeout)
+      const response = await fetch(url, {
+        signal: controller.signal
+      } as RequestInit)
+
+      clearTimeout(id)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${url}: ${response.statusText}`)
+      }
+
+      return (await response.json()) as AwsIpRanges
+    } catch (error) {
+      if (attempt === retries) {
+        throw new Error(
+          `Fetch failed for ${url} after ${retries} attempts: ${error.message}`
+        )
+      }
+      console.warn(
+        `Fetch attempt ${attempt} for ${url} failed: ${error.message}. Retrying in ${timeout / 1000} seconds...`
+      )
+      await new Promise((resolve) => setTimeout(resolve, timeout))
+    }
+  }
+}
 
 // Fetch AWS IP ranges
 const fetchAwsIpRanges = async (): Promise<void> => {
-  const response = await fetch('https://ip-ranges.amazonaws.com/ip-ranges.json')
-
-  if (!response.ok) {
-    throw new Error('[AWS] Failed to fetch AWS IP ranges')
-  }
-
-  const data = (await response.json()) as AwsIpRanges // Type assertion
+  const url = 'https://ip-ranges.amazonaws.com/ip-ranges.json'
+  const data = await fetchWithRetryAndTimeout(url)
 
   // Extract creation date
   const createDate = data.createDate
-  await fs.writeFile(timestampFile, createDate)
+  await fs.writeFile(TIMESTAMP_FILE, createDate)
 
   // Extract IPv4 and IPv6 prefixes
   const ipv4Prefixes = data.prefixes
@@ -50,8 +80,8 @@ const fetchAwsIpRanges = async (): Promise<void> => {
   const sortedIpv6 = sortAndUnique(ipv6Prefixes)
 
   // Write to output files
-  await fs.writeFile(ipv4Output, sortedIpv4.join('\n'))
-  await fs.writeFile(ipv6Output, sortedIpv6.join('\n'))
+  await fs.writeFile(IPV4_OUTPUT, sortedIpv4.join('\n'))
+  await fs.writeFile(IPV6_OUTPUT, sortedIpv6.join('\n'))
 
   console.log('[AWS] IP addresses processed and saved successfully.')
 }
@@ -60,6 +90,7 @@ const fetchAwsIpRanges = async (): Promise<void> => {
 const main = async (): Promise<void> => {
   try {
     await fetchAwsIpRanges()
+    console.log('[AWS] Complete!')
   } catch (error) {
     console.error('[AWS] Error:', error)
     process.exit(1)

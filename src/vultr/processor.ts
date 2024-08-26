@@ -4,7 +4,7 @@
  * https://docs.vultr.com/vultr-ip-space
  */
 
-import fetch from 'node-fetch'
+import fetch, { RequestInit } from 'node-fetch'
 import { promises as fs } from 'fs'
 import path from 'path'
 import { VultrIpRanges } from '../types'
@@ -13,13 +13,40 @@ import { VultrIpRanges } from '../types'
 const ipv4Output = path.join('vultr', 'ipv4.txt')
 const ipv6Output = path.join('vultr', 'ipv6.txt')
 
-// Fetch Vultr IP ranges
-const fetchVultrIpRanges = async (): Promise<VultrIpRanges> => {
-  const response = await fetch('https://geofeed.constant.com/?json')
-  if (!response.ok) {
-    throw new Error('[Vultr] Failed to fetch IP ranges')
+// Function to fetch Vultr IP ranges with retry and timeout logic
+const fetchVultrIpRanges = async (
+  retries: number = 3,
+  timeout: number = 10000
+): Promise<VultrIpRanges> => {
+  const url = 'https://geofeed.constant.com/?json'
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController()
+      const id = setTimeout(() => controller.abort(), timeout)
+      const response = await fetch(url, {
+        signal: controller.signal
+      } as RequestInit)
+      clearTimeout(id)
+
+      if (!response.ok) {
+        throw new Error('[Vultr] Error: Failed to fetch IP ranges.')
+      }
+
+      return response.json() as Promise<VultrIpRanges>
+    } catch (error) {
+      if (attempt === retries) {
+        throw new Error(
+          `[Vultr] Fetch failed after ${retries} attempts: ${error.message}`
+        )
+      }
+      console.warn(
+        `[Vultr] Fetch attempt ${attempt} failed: ${error.message}. Retrying in ${timeout / 1000} seconds...`
+      )
+      await new Promise((resolve) => setTimeout(resolve, timeout))
+    }
   }
-  return response.json() as Promise<VultrIpRanges>
+  throw new Error(`[Vultr] Fetch failed after ${retries} attempts`) // This line should theoretically never be reached
 }
 
 // Utility function to sort IP addresses

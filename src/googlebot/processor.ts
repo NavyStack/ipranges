@@ -4,7 +4,7 @@
  * https://www.gstatic.com/ipranges/cloud.json
  * https://developers.google.com/search/apis/ipranges/googlebot.json
  */
-import fetch from 'node-fetch'
+import fetch, { RequestInit } from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
 import { GooglebotIpRanges, GoogleAddressFiles } from '../types'
@@ -14,13 +14,41 @@ const GOOGLE_DIR = 'googlebot'
 const BASE_URL =
   'https://developers.google.com/search/apis/ipranges/googlebot.json'
 
-// Utility function to fetch and parse googlebot IP ranges from URL
-const fetchGooglebotIpRanges = async (): Promise<GooglebotIpRanges> => {
-  const response = await fetch(BASE_URL)
-  return response.json() as Promise<GooglebotIpRanges>
+// Fetch Googlebot IP ranges with retry and timeout logic
+const fetchGooglebotIpRanges = async (
+  retries: number = 3,
+  timeout: number = 10000
+): Promise<GooglebotIpRanges> => {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController()
+      const id = setTimeout(() => controller.abort(), timeout)
+      const response = await fetch(BASE_URL, {
+        signal: controller.signal
+      } as RequestInit)
+      clearTimeout(id)
+
+      if (!response.ok) {
+        throw new Error('[Googlebot] Failed to fetch IP ranges')
+      }
+
+      return (await response.json()) as GooglebotIpRanges
+    } catch (error) {
+      if (attempt === retries) {
+        throw new Error(
+          `[Googlebot] Fetch failed after ${retries} attempts: ${error.message}`
+        )
+      }
+      console.warn(
+        `[Googlebot] Fetch attempt ${attempt} failed: ${error.message}. Retrying in ${timeout / 1000} seconds...`
+      )
+      await new Promise((resolve) => setTimeout(resolve, timeout))
+    }
+  }
+  throw new Error(`[Googlebot] Fetch failed after ${retries} attempts`) // This line should theoretically never be reached
 }
 
-// Utility function to process googlebot IP ranges
+// Utility function to process Googlebot IP ranges
 const processGooglebotIpRanges = (
   data: GooglebotIpRanges
 ): GoogleAddressFiles => {
@@ -45,7 +73,7 @@ const processGooglebotIpRanges = (
   }
 }
 
-// Utility function to save googlebot IPs to files
+// Utility function to save Googlebot IPs to files
 const saveGooglebotIpRangesToFile = async (addresses: GoogleAddressFiles) => {
   const dirPath = path.join(GOOGLE_DIR)
   await fs.mkdir(dirPath, { recursive: true })

@@ -15,6 +15,7 @@ import linodeMain from './linode/processor'
 const runAllProcessors = async () => {
   try {
     await Promise.all([
+      linodeMain(),
       awsMain(),
       betterstackMain(),
       bingbotMain(),
@@ -25,8 +26,7 @@ const runAllProcessors = async () => {
       googlebotMain(),
       microsoftAzureMain(),
       oracleMain(),
-      vultrMain(),
-      linodeMain()
+      vultrMain()
     ])
 
     console.log('All IP address processors completed successfully.')

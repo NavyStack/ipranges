@@ -4,7 +4,7 @@
  * https://www.gstatic.com/ipranges/cloud.json
  * https://developers.google.com/search/apis/ipranges/googlebot.json
  */
-import fetch from 'node-fetch'
+import fetch, { RequestInit } from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
 import {
@@ -21,19 +21,51 @@ const BASE_URLS = {
   googlebot: 'https://developers.google.com/search/apis/ipranges/googlebot.json'
 }
 
+// Utility function to fetch and parse IP ranges from URLs with retry and timeout
+const fetchWithRetryAndTimeout = async (
+  url: string,
+  retries: number = 3,
+  timeout: number = 10000
+): Promise<string> => {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController()
+      const id = setTimeout(() => controller.abort(), timeout)
+      const response = await fetch(url, {
+        signal: controller.signal
+      } as RequestInit)
+      clearTimeout(id)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${url}: ${response.statusText}`)
+      }
+
+      return await response.text()
+    } catch (error) {
+      if (attempt === retries) {
+        throw new Error(
+          `Fetch failed for ${url} after ${retries} attempts: ${error.message}`
+        )
+      }
+      console.warn(
+        `Fetch attempt ${attempt} for ${url} failed: ${error.message}. Retrying in ${timeout / 1000} seconds...`
+      )
+      await new Promise((resolve) => setTimeout(resolve, timeout))
+    }
+  }
+}
+
 // Utility function to fetch and parse IP ranges from URLs
 const fetchAndParseIpRanges = async () => {
   const responses = await Promise.all([
-    fetch(BASE_URLS.goog),
-    fetch(BASE_URLS.cloud),
-    fetch(BASE_URLS.googlebot)
+    fetchWithRetryAndTimeout(BASE_URLS.goog),
+    fetchWithRetryAndTimeout(BASE_URLS.cloud),
+    fetchWithRetryAndTimeout(BASE_URLS.googlebot)
   ])
 
-  const [googText, cloudJson, googlebotJson] = await Promise.all([
-    responses[0].text(),
-    responses[1].json() as Promise<GoogleCloudIpRanges>,
-    responses[2].json() as Promise<GooglebotIpRanges>
-  ])
+  const [googText, cloudJsonText, googlebotJsonText] = responses
+  const cloudJson = JSON.parse(cloudJsonText) as GoogleCloudIpRanges
+  const googlebotJson = JSON.parse(googlebotJsonText) as GooglebotIpRanges
 
   return { googText, cloudJson, googlebotJson }
 }

@@ -3,7 +3,7 @@
  * https://www.cloudflare.com/ips/
  */
 
-import fetch from 'node-fetch'
+import fetch, { RequestInit } from 'node-fetch'
 import fs from 'fs/promises'
 import path from 'path'
 import { CloudflareIpRanges } from '../types'
@@ -20,34 +20,60 @@ const removeFileIfExists = async (filePath: string): Promise<void> => {
     console.log(`[Cloudflare] ${filePath} removed successfully.`)
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
-      console.log(`[Cloudflare] : File ${filePath} does not exist. Skip.`)
+      console.log(`[Cloudflare] File ${filePath} does not exist. Skip.`)
     } else {
       throw err
     }
   }
 }
 
-// Function to fetch IP ranges from Cloudflare
-const fetchCloudflareIpRanges = async (): Promise<CloudflareIpRanges> => {
-  const [ipv4Response, ipv6Response] = await Promise.all([
-    fetch('https://www.cloudflare.com/ips-v4/'),
-    fetch('https://www.cloudflare.com/ips-v6/')
-  ])
+// Function to fetch IP ranges from Cloudflare with retry and timeout logic
+const fetchCloudflareIpRanges = async (
+  retries: number = 3,
+  timeout: number = 10000
+): Promise<CloudflareIpRanges> => {
+  const urls = [
+    'https://www.cloudflare.com/ips-v4/',
+    'https://www.cloudflare.com/ips-v6/'
+  ]
 
-  if (!ipv4Response.ok) {
-    throw new Error('[Cloudflare] Error: Failed to fetch IPv4 addresses.')
-  }
-  if (!ipv6Response.ok) {
-    throw new Error('[Cloudflare] Error: Failed to fetch IPv6 addresses.')
-  }
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController()
+      const id = setTimeout(() => controller.abort(), timeout)
+      const [ipv4Response, ipv6Response] = await Promise.all([
+        fetch(urls[0], { signal: controller.signal } as RequestInit),
+        fetch(urls[1], { signal: controller.signal } as RequestInit)
+      ])
+      clearTimeout(id)
 
-  const ipv4Text = await ipv4Response.text()
-  const ipv6Text = await ipv6Response.text()
+      if (!ipv4Response.ok) {
+        throw new Error('[Cloudflare] Error: Failed to fetch IPv4 addresses.')
+      }
+      if (!ipv6Response.ok) {
+        throw new Error('[Cloudflare] Error: Failed to fetch IPv6 addresses.')
+      }
 
-  return {
-    ipv4: ipv4Text.split('\n').filter(Boolean),
-    ipv6: ipv6Text.split('\n').filter(Boolean)
+      const ipv4Text = await ipv4Response.text()
+      const ipv6Text = await ipv6Response.text()
+
+      return {
+        ipv4: ipv4Text.split('\n').filter(Boolean),
+        ipv6: ipv6Text.split('\n').filter(Boolean)
+      }
+    } catch (error) {
+      if (attempt === retries) {
+        throw new Error(
+          `[Cloudflare] Fetch failed after ${retries} attempts: ${error.message}`
+        )
+      }
+      console.warn(
+        `[Cloudflare] Fetch attempt ${attempt} failed: ${error.message}. Retrying in ${timeout / 1000} seconds...`
+      )
+      await new Promise((resolve) => setTimeout(resolve, timeout))
+    }
   }
+  throw new Error(`[Cloudflare] Fetch failed after ${retries} attempts`) // This line should theoretically never be reached
 }
 
 // Function to process and save IP addresses
@@ -74,9 +100,9 @@ const main = async (): Promise<void> => {
     await processAndSaveIpAddresses(ipv4, ipv4Output)
     await processAndSaveIpAddresses(ipv6, ipv6Output)
 
-    const timestamp = new Date().toISOString()
+    const timestamp = new Date().toISOString().replace('.000Z', '.000000Z')
     await fs.writeFile(timestampFile, timestamp)
-    console.log('[Cloudflare] : Timestamp saved successfully.')
+    console.log('[Cloudflare] Timestamp saved successfully.')
 
     console.log('[Cloudflare] Complete!')
   } catch (error) {
