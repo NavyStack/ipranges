@@ -9,7 +9,7 @@ import path from 'path'
 import { CloudflareIpRanges } from '../types'
 
 // Define file paths
-const timestampFile = path.join('cloudflare', 'timestamp.txt')
+// const timestampFile = path.join('cloudflare', 'timestamp.txt')
 const ipv4Output = path.join('cloudflare', 'ipv4.txt')
 const ipv6Output = path.join('cloudflare', 'ipv6.txt')
 
@@ -93,15 +93,15 @@ const processAndSaveIpAddresses = async (
 // Main function
 const main = async (): Promise<void> => {
   try {
-    await removeFileIfExists(timestampFile)
+    //await removeFileIfExists(timestampFile)
 
     const { ipv4, ipv6 } = await fetchCloudflareIpRanges()
 
     await processAndSaveIpAddresses(ipv4, ipv4Output)
     await processAndSaveIpAddresses(ipv6, ipv6Output)
 
-    const timestamp = new Date().toISOString().replace('.000Z', '.000000Z')
-    await fs.writeFile(timestampFile, timestamp)
+    // const timestamp = new Date().toISOString().replace('.000Z', '.000000Z')
+    // await fs.writeFile(timestampFile, timestamp)
     console.log('[Cloudflare] Timestamp saved successfully.')
 
     console.log('[Cloudflare] Complete!')

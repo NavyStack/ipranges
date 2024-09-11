@@ -4,7 +4,7 @@ import path from 'path'
 import { GithubApiResponse } from '../types'
 
 // Define file paths
-const TIMESTAMP_FILE_PATH = path.join('github', 'timestamp.txt')
+// const TIMESTAMP_FILE_PATH = path.join('github', 'timestamp.txt')
 const GITHUB_IPV4_FILE_PATH = path.join('github', 'ipv4.txt')
 const GITHUB_IPV6_FILE_PATH = path.join('github', 'ipv6.txt')
 
@@ -107,10 +107,10 @@ const fetchAndProcessGithubData = async (
         saveAddressesToFile(ipv6Files, 'ipv6'),
         fs.writeFile(GITHUB_IPV4_FILE_PATH, ipv4Addresses.sort().join('\n')),
         fs.writeFile(GITHUB_IPV6_FILE_PATH, ipv6Addresses.sort().join('\n')),
-        fs.writeFile(
-          TIMESTAMP_FILE_PATH,
-          new Date().toISOString().replace('.000Z', '.000000Z')
-        )
+        // fs.writeFile(
+        //   TIMESTAMP_FILE_PATH,
+        //   new Date().toISOString().replace('.000Z', '.000000Z')
+        // )
       ])
 
       console.log('[Github] All files saved successfully.')

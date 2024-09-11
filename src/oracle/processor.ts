@@ -8,7 +8,7 @@ import path from 'path'
 import { OracleIpRanges } from '../types'
 
 // Define file paths
-const timestampFile = path.join('oracle', 'timestamp.txt')
+// const timestampFile = path.join('oracle', 'timestamp.txt')
 const ipv4Output = path.join('oracle', 'ipv4.txt')
 
 // Function to remove a file if it exists
@@ -55,7 +55,7 @@ const fetchOracleIpRanges = async (
         .replace('.000Z', '.000000Z')
 
       // Save timestamp to file
-      await fs.writeFile(timestampFile, oracleUtc)
+      // await fs.writeFile(timestampFile, oracleUtc)
       console.log('[Oracle] Timestamp saved successfully.')
 
       // Extract IPv4 addresses
@@ -96,7 +96,7 @@ const fetchOracleIpRanges = async (
 // Main function
 const main = async (): Promise<void> => {
   try {
-    await removeFileIfExists(timestampFile)
+    // await removeFileIfExists(timestampFile)
     await fetchOracleIpRanges()
     console.log('[Oracle] Complete!')
   } catch (error) {

@@ -8,7 +8,7 @@ import path from 'path'
 import { BingBotIpRanges } from '../types'
 
 // Define file paths
-const TIMESTAMP_FILE_PATH = path.join('bingbot', 'timestamp.txt')
+// const TIMESTAMP_FILE_PATH = path.join('bingbot', 'timestamp.txt')
 const IPV4_OUTPUT_FILE_PATH = path.join('bingbot', 'ipv4.txt')
 const IPV6_OUTPUT_FILE_PATH = path.join('bingbot', 'ipv6.txt')
 
@@ -102,14 +102,14 @@ const fetchAndProcessBingBotData = async (): Promise<void> => {
 
   // Save timestamp
   const timestamp = new Date().toISOString().replace('.000Z', '.000000Z')
-  await fs.writeFile(TIMESTAMP_FILE_PATH, timestamp)
+  // await fs.writeFile(TIMESTAMP_FILE_PATH, timestamp)
   console.log('[Bingbot] Timestamp saved successfully.')
 }
 
 // Main function
 const main = async (): Promise<void> => {
   try {
-    await removeFileIfExists(TIMESTAMP_FILE_PATH)
+    // await removeFileIfExists(TIMESTAMP_FILE_PATH)
     await fetchAndProcessBingBotData()
     console.log('[Bingbot] Complete!')
   } catch (error) {
