@@ -1,17 +1,9 @@
 // src/google/processor.ts
-/**
- * https://www.gstatic.com/ipranges/goog.txt
- * https://www.gstatic.com/ipranges/cloud.json
- * https://developers.google.com/search/apis/ipranges/googlebot.json
- */
-import fetch, { RequestInit } from 'node-fetch'
-import fs from 'fs/promises'
 import path from 'path'
-import {
-  GoogleCloudIpRanges,
-  GooglebotIpRanges,
-  GoogleAddressFiles
-} from '../types'
+import fs from 'fs/promises'
+import { fetchWithRetryAndTimeout } from '../utils/fetchUtils'
+import { sortAndUnique } from '../utils/ipUtils'
+import { GoogleCloudIpRanges, GooglebotIpRanges } from '../types'
 
 // Define base directory and URLs
 const GOOGLE_DIR = 'google'
@@ -21,172 +13,121 @@ const BASE_URLS = {
   googlebot: 'https://developers.google.com/search/apis/ipranges/googlebot.json'
 }
 
-// Utility function to fetch and parse IP ranges from URLs with retry and timeout
-const fetchWithRetryAndTimeout = async (
-  url: string,
-  retries: number = 3,
-  timeout: number = 10000
-): Promise<string> => {
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    try {
-      const controller = new AbortController()
-      const id = setTimeout(() => controller.abort(), timeout)
-      const response = await fetch(url, {
-        signal: controller.signal
-      } as RequestInit)
-      clearTimeout(id)
+// Fetch and process Google IP ranges
+const fetchAndProcessGoogleIpRanges = async (): Promise<void> => {
+  const [googText, cloudJson, googlebotJson] = await Promise.all([
+    fetchWithRetryAndTimeout<string>(BASE_URLS.goog),
+    fetchWithRetryAndTimeout<GoogleCloudIpRanges>(BASE_URLS.cloud),
+    fetchWithRetryAndTimeout<GooglebotIpRanges>(BASE_URLS.googlebot)
+  ])
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${url}: ${response.statusText}`)
-      }
+  // Prepare sets for combined IP addresses
+  const combinedIpv4Addresses: Set<string> = new Set()
+  const combinedIpv6Addresses: Set<string> = new Set()
 
-      return await response.text()
-    } catch (error) {
-      if (attempt === retries) {
-        throw new Error(
-          `Fetch failed for ${url} after ${retries} attempts: ${error.message}`
-        )
+  // Process goog.txt
+  const googIpv4: string[] = []
+  const googIpv6: string[] = []
+  googText
+    .split('\n')
+    .filter(Boolean)
+    .forEach((ip) => {
+      if (ip.includes(':')) {
+        googIpv6.push(ip)
+        combinedIpv6Addresses.add(ip)
+      } else {
+        googIpv4.push(ip)
+        combinedIpv4Addresses.add(ip)
       }
-      console.warn(
-        `Fetch attempt ${attempt} for ${url} failed: ${error.message}. Retrying in ${timeout / 1000} seconds...`
-      )
-      await new Promise((resolve) => setTimeout(resolve, timeout))
+    })
+
+  // Process cloud.json
+  const cloudIpv4: string[] = []
+  const cloudIpv6: string[] = []
+  cloudJson.prefixes.forEach((prefix) => {
+    if (prefix.ipv4Prefix) {
+      cloudIpv4.push(prefix.ipv4Prefix)
+      combinedIpv4Addresses.add(prefix.ipv4Prefix)
     }
-  }
-}
+    if (prefix.ipv6Prefix) {
+      cloudIpv6.push(prefix.ipv6Prefix)
+      combinedIpv6Addresses.add(prefix.ipv6Prefix)
+    }
+  })
 
-// Utility function to fetch and parse IP ranges from URLs
-const fetchAndParseIpRanges = async () => {
-  const responses = await Promise.all([
-    fetchWithRetryAndTimeout(BASE_URLS.goog),
-    fetchWithRetryAndTimeout(BASE_URLS.cloud),
-    fetchWithRetryAndTimeout(BASE_URLS.googlebot)
-  ])
+  // Process googlebot.json
+  const googlebotIpv4: string[] = []
+  const googlebotIpv6: string[] = []
+  googlebotJson.prefixes.forEach((prefix) => {
+    if (prefix.ipv4Prefix) {
+      googlebotIpv4.push(prefix.ipv4Prefix)
+      combinedIpv4Addresses.add(prefix.ipv4Prefix)
+    }
+    if (prefix.ipv6Prefix) {
+      googlebotIpv6.push(prefix.ipv6Prefix)
+      combinedIpv6Addresses.add(prefix.ipv6Prefix)
+    }
+  })
 
-  const [googText, cloudJsonText, googlebotJsonText] = responses
-  const cloudJson = JSON.parse(cloudJsonText) as GoogleCloudIpRanges
-  const googlebotJson = JSON.parse(googlebotJsonText) as GooglebotIpRanges
+  // Sort and remove duplicates for each category
+  const sortedGoogIpv4 = sortAndUnique(googIpv4)
+  const sortedGoogIpv6 = sortAndUnique(googIpv6)
+  const sortedCloudIpv4 = sortAndUnique(cloudIpv4)
+  const sortedCloudIpv6 = sortAndUnique(cloudIpv6)
+  const sortedGooglebotIpv4 = sortAndUnique(googlebotIpv4)
+  const sortedGooglebotIpv6 = sortAndUnique(googlebotIpv6)
 
-  return { googText, cloudJson, googlebotJson }
-}
-
-// Utility function to extract and classify IP addresses
-const extractAddresses = (text: string, isIPv6: boolean) => {
-  return text.split('\n').reduce(
-    (addresses, line) => {
-      const address = line.trim()
-      if (address) {
-        if (isIPv6 && address.includes(':')) addresses.ipv6.add(address)
-        else if (!isIPv6 && !address.includes(':')) addresses.ipv4.add(address)
-      }
-      return addresses
-    },
-    { ipv4: new Set<string>(), ipv6: new Set<string>() }
-  )
-}
-
-// Utility function to process IP ranges
-const processIpRanges = (data: {
-  googText: string
-  cloudJson: GoogleCloudIpRanges
-  googlebotJson: GooglebotIpRanges
-}) => {
-  const { ipv4, ipv6 } = extractAddresses(data.googText, false)
-  const cloudAddresses = data.cloudJson.prefixes || []
-  const googlebotAddresses = data.googlebotJson.prefixes || []
-
-  const cloudIpv4 = cloudAddresses
-    .map((prefix) => prefix.ipv4Prefix)
-    .filter(Boolean)
-  const cloudIpv6 = cloudAddresses
-    .map((prefix) => prefix.ipv6Prefix)
-    .filter(Boolean)
-  const googlebotIpv4 = googlebotAddresses
-    .map((prefix) => prefix.ipv4Prefix)
-    .filter(Boolean)
-  const googlebotIpv6 = googlebotAddresses
-    .map((prefix) => prefix.ipv6Prefix)
-    .filter(Boolean)
-
-  cloudIpv4.forEach((ip) => ipv4.add(ip))
-  cloudIpv6.forEach((ip) => ipv6.add(ip))
-  googlebotIpv4.forEach((ip) => ipv4.add(ip))
-  googlebotIpv6.forEach((ip) => ipv6.add(ip))
-
-  return {
-    ipv4Addresses: Array.from(ipv4).sort(),
-    ipv6Addresses: Array.from(ipv6).sort(),
-    cloudIpv4: cloudIpv4.join('\n'),
-    cloudIpv6: cloudIpv6.join('\n'),
-    googlebotIpv4: googlebotIpv4.join('\n'),
-    googlebotIpv6: googlebotIpv6.join('\n'),
-    googIpv4: data.googText
-      .split('\n')
-      .filter((line) => !line.includes(':'))
-      .join('\n'),
-    googIpv6: data.googText
-      .split('\n')
-      .filter((line) => line.includes(':'))
-      .join('\n')
-  }
-}
-
-// Utility function to save addresses to files
-const saveAddressesToFile = async (addresses: GoogleAddressFiles) => {
-  // Save combined results into separate directories and files
+  // Save per-category IP addresses
   await Promise.all([
-    saveToCategoryDir('goog', addresses.googIpv4, addresses.googIpv6),
-    saveToCategoryDir('cloud', addresses.cloudIpv4, addresses.cloudIpv6),
-    saveToCategoryDir(
+    saveCategoryIpAddresses('goog', sortedGoogIpv4, sortedGoogIpv6),
+    saveCategoryIpAddresses('cloud', sortedCloudIpv4, sortedCloudIpv6),
+    saveCategoryIpAddresses(
       'googlebot',
-      addresses.googlebotIpv4,
-      addresses.googlebotIpv6
-    ),
-    saveToCombinedFiles(addresses)
+      sortedGooglebotIpv4,
+      sortedGooglebotIpv6
+    )
   ])
 
-  console.log(
-    '[Google] IP ranges have been saved to the',
-    GOOGLE_DIR,
-    'directory.'
-  )
+  // Save combined IP addresses
+  const sortedCombinedIpv4 = sortAndUnique(Array.from(combinedIpv4Addresses))
+  const sortedCombinedIpv6 = sortAndUnique(Array.from(combinedIpv6Addresses))
+
+  await Promise.all([
+    fs.writeFile(
+      path.join(GOOGLE_DIR, 'ipv4.txt'),
+      sortedCombinedIpv4.join('\n')
+    ),
+    fs.writeFile(
+      path.join(GOOGLE_DIR, 'ipv6.txt'),
+      sortedCombinedIpv6.join('\n')
+    )
+  ])
+
+  console.log('[Google] IP addresses processed and saved successfully.')
 }
 
-// Utility function to save IPs to category directories
-const saveToCategoryDir = async (
+// Utility function to save IP addresses per category
+const saveCategoryIpAddresses = async (
   category: string,
-  ipv4: string,
-  ipv6: string
+  ipv4Addresses: string[],
+  ipv6Addresses: string[]
 ) => {
   const dirPath = path.join(GOOGLE_DIR, category)
   await fs.mkdir(dirPath, { recursive: true })
 
   await Promise.all([
-    fs.writeFile(path.join(dirPath, 'ipv4.txt'), ipv4),
-    fs.writeFile(path.join(dirPath, 'ipv6.txt'), ipv6)
+    fs.writeFile(path.join(dirPath, 'ipv4.txt'), ipv4Addresses.join('\n')),
+    fs.writeFile(path.join(dirPath, 'ipv6.txt'), ipv6Addresses.join('\n'))
   ])
-}
 
-// Utility function to save combined IPs to google directory
-const saveToCombinedFiles = async (addresses: GoogleAddressFiles) => {
-  await Promise.all([
-    fs.writeFile(
-      path.join(GOOGLE_DIR, 'ipv4.txt'),
-      addresses.ipv4Addresses.join('\n')
-    ),
-    fs.writeFile(
-      path.join(GOOGLE_DIR, 'ipv6.txt'),
-      addresses.ipv6Addresses.join('\n')
-    )
-  ])
+  console.log(`[Google] ${category} IP addresses saved successfully.`)
 }
 
 // Main function
 const main = async (): Promise<void> => {
   try {
-    const data = await fetchAndParseIpRanges()
-    const addresses = processIpRanges(data)
-    await saveAddressesToFile(addresses)
+    await fetchAndProcessGoogleIpRanges()
+    console.log('[Google] Complete!')
   } catch (error) {
     console.error('[Google] Error:', error)
     process.exit(1)

@@ -1,5 +1,17 @@
 // src/types.ts
 
+// 공통 타입 정의
+export interface IpPrefix {
+  ipv4Prefix?: string
+  ipv6Prefix?: string
+}
+
+export interface IpRange {
+  ipv4: string[]
+  ipv6: string[]
+}
+
+// 파일 관련 인터페이스
 export interface FilePathParams {
   filePath: string
 }
@@ -16,98 +28,87 @@ export interface LogParams {
 export interface FileProcessingParams {
   sourceFilePath: string
   outputSuffix: string
+  options: { commaSeparated: boolean }
 }
 
 export type FileProcessFunction = (
-  params: FileProcessingParams
+  sourceFilePath: string,
+  outputSuffix: string,
+  options: { commaSeparated: boolean }
 ) => Promise<string>
 
+// 주소 병합 결과
 export interface AddressMergeResult {
   mergedAddresses: string[]
 }
 
+// 서비스별 타입 정의
+
+// AWS
 export interface AwsIpRanges {
   createDate: string
-  prefixes: {
+  prefixes: Array<{
     ip_prefix: string
     region: string
     service: string
-  }[]
-  ipv6_prefixes: {
+  }>
+  ipv6_prefixes: Array<{
     ipv6_prefix: string
     region: string
     service: string
-  }[]
+  }>
 }
 
-export interface OracleRegion {
-  region: string
-  cidrs: {
-    cidr: string
-  }[]
-}
-
+// Oracle
 export interface OracleIpRanges {
   last_updated_timestamp: string
   regions: OracleRegion[]
 }
 
-export interface VultrSubnet {
-  ip_prefix: string
+export interface OracleRegion {
+  region: string
+  cidrs: Array<{
+    cidr: string
+  }>
 }
 
+// Vultr
 export interface VultrIpRanges {
-  subnets: VultrSubnet[]
+  subnets: Array<{
+    ip_prefix: string
+  }>
 }
 
+// BingBot
 export interface BingBotIpRanges {
   creationTime: string
-  prefixes: {
-    ipv6Prefix?: string
-    ipv4Prefix?: string
-  }[]
+  prefixes: IpPrefix[]
 }
 
+// Cloudflare
 export interface CloudflareIpRanges {
   ipv4: string[]
   ipv6: string[]
 }
 
+// Google
+export interface GoogleIpRangePrefix extends IpPrefix {
+  service?: string
+  scope?: string
+}
+
 export interface GoogleCloudIpRanges {
   syncToken: string
   creationTime: string
-  prefixes: {
-    ipv4Prefix?: string
-    ipv6Prefix?: string
-    service: string
-    scope: string
-  }[]
+  prefixes: GoogleIpRangePrefix[]
 }
 
 export interface GooglebotIpRanges {
   creationTime: string
-  prefixes: {
-    ipv4Prefix?: string
-    ipv6Prefix?: string
-  }[]
+  prefixes: IpPrefix[]
 }
 
-export interface GoogleAddressFiles {
-  ipv4Addresses: string[]
-  ipv6Addresses: string[]
-  cloudIpv4: string
-  cloudIpv6: string
-  googlebotIpv4: string
-  googlebotIpv6: string
-  googIpv4: string
-  googIpv6: string
-}
-
-export interface GithubIpRanges {
-  ipv4: string[]
-  ipv6: string[]
-}
-
+// GitHub
 export interface GithubApiResponse {
   verifiable_password_authentication?: boolean
   ssh_key_fingerprints?: {
@@ -141,6 +142,7 @@ export interface GithubApiResponse {
   }
 }
 
+// Microsoft Azure
 export interface MicrosoftIpRanges {
   values: Array<{
     properties: {
