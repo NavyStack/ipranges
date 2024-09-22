@@ -3,6 +3,7 @@ import awsMain from './aws/processor'
 import betterstackMain from './betterstack/processor'
 import bingbotMain from './bingbot/processor'
 import cloudflareMain from './cloudflare/processor'
+import cloudflareMainCN from './cloudflare-cn/processor'
 import digitaloceanMain from './digitalocean/processor'
 import githubMain from './github/processor'
 import googleMain from './google/processor'
@@ -20,6 +21,7 @@ const runAllProcessors = async () => {
       betterstackMain(),
       bingbotMain(),
       cloudflareMain(),
+      cloudflareMainCN(),
       digitaloceanMain(),
       githubMain(),
       googleMain(),

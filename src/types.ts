@@ -1,6 +1,5 @@
 // src/types.ts
 
-// 공통 타입 정의
 export interface IpPrefix {
   ipv4Prefix?: string
   ipv6Prefix?: string
@@ -11,7 +10,6 @@ export interface IpRange {
   ipv6: string[]
 }
 
-// 파일 관련 인터페이스
 export interface FilePathParams {
   filePath: string
 }
@@ -37,12 +35,9 @@ export type FileProcessFunction = (
   options: { commaSeparated: boolean }
 ) => Promise<string>
 
-// 주소 병합 결과
 export interface AddressMergeResult {
   mergedAddresses: string[]
 }
-
-// 서비스별 타입 정의
 
 // AWS
 export interface AwsIpRanges {
@@ -60,23 +55,32 @@ export interface AwsIpRanges {
 }
 
 // Oracle
+export interface OracleCidr {
+  cidr: string
+  tags?: string[]
+}
+
+export interface OracleRegion {
+  region: string
+  cidrs: OracleCidr[]
+}
+
 export interface OracleIpRanges {
   last_updated_timestamp: string
   regions: OracleRegion[]
 }
 
-export interface OracleRegion {
-  region: string
-  cidrs: Array<{
-    cidr: string
-  }>
+// Vultr
+export interface VultrSubnet {
+  ip_prefix: string
+  alpha2code?: string
+  region?: string
+  city?: string
+  postal_code?: string
 }
 
-// Vultr
 export interface VultrIpRanges {
-  subnets: Array<{
-    ip_prefix: string
-  }>
+  subnets: VultrSubnet[]
 }
 
 // BingBot
@@ -86,9 +90,26 @@ export interface BingBotIpRanges {
 }
 
 // Cloudflare
-export interface CloudflareIpRanges {
-  ipv4: string[]
-  ipv6: string[]
+export interface CloudflareError {
+  code: number
+  message: string
+}
+
+export interface CloudflareMessage {
+  code: number
+  message: string
+}
+
+export interface CloudflareCnResponse {
+  result: {
+    ipv4_cidrs: string[]
+    ipv6_cidrs: string[]
+    jdcloud_cidrs: string[]
+    etag: string
+  }
+  success: boolean
+  errors: CloudflareError[]
+  messages: CloudflareMessage[]
 }
 
 // Google
