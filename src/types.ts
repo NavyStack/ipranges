@@ -1,5 +1,6 @@
 // src/types.ts
 
+// Basic IP-related types
 export interface IpPrefix {
   ipv4Prefix?: string
   ipv6Prefix?: string
@@ -10,6 +11,7 @@ export interface IpRange {
   ipv6: string[]
 }
 
+// File handling types
 export interface FilePathParams {
   filePath: string
 }
@@ -39,7 +41,7 @@ export interface AddressMergeResult {
   mergedAddresses: string[]
 }
 
-// AWS
+// AWS-specific types
 export interface AwsIpRanges {
   createDate: string
   prefixes: Array<{
@@ -54,7 +56,7 @@ export interface AwsIpRanges {
   }>
 }
 
-// Oracle
+// Oracle-specific types
 export interface OracleCidr {
   cidr: string
   tags?: string[]
@@ -70,7 +72,7 @@ export interface OracleIpRanges {
   regions: OracleRegion[]
 }
 
-// Vultr
+// Vultr-specific types
 export interface VultrSubnet {
   ip_prefix: string
   alpha2code?: string
@@ -83,13 +85,13 @@ export interface VultrIpRanges {
   subnets: VultrSubnet[]
 }
 
-// BingBot
+// BingBot-specific types
 export interface BingBotIpRanges {
   creationTime: string
   prefixes: IpPrefix[]
 }
 
-// Cloudflare
+// Cloudflare-specific types
 export interface CloudflareError {
   code: number
   message: string
@@ -112,7 +114,7 @@ export interface CloudflareCnResponse {
   messages: CloudflareMessage[]
 }
 
-// Google
+// Google-specific types
 export interface GoogleIpRangePrefix extends IpPrefix {
   service?: string
   scope?: string
@@ -129,7 +131,7 @@ export interface GooglebotIpRanges {
   prefixes: IpPrefix[]
 }
 
-// GitHub
+// GitHub-specific types
 export interface GithubApiResponse {
   verifiable_password_authentication?: boolean
   ssh_key_fingerprints?: {
@@ -163,11 +165,23 @@ export interface GithubApiResponse {
   }
 }
 
-// Microsoft Azure
+// Microsoft Azure-specific types
+export interface AzureProperties {
+  changeNumber: number
+  region: string
+  regionId: number
+  platform: string
+  systemService?: string
+  addressPrefixes: string[]
+  networkFeatures: string[]
+}
+
+export interface MicrosoftAzureValue {
+  name: string
+  id: string
+  properties: AzureProperties
+}
+
 export interface MicrosoftIpRanges {
-  values: Array<{
-    properties: {
-      addressPrefixes?: string[]
-    }
-  }>
+  values: MicrosoftAzureValue[]
 }

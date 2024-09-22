@@ -20,9 +20,9 @@ const readFileLines = async (filePath: string): Promise<string[]> => {
   try {
     const content = await fs.readFile(filePath, 'utf-8')
     return content
-      .trim()
       .split('\n')
-      .filter((line) => line.trim() !== '')
+      .map((line) => line.trim())
+      .filter((line) => line !== '')
   } catch (error) {
     logError(`Error reading file "${filePath}"`, error as Error)
     throw error
@@ -34,6 +34,7 @@ const writeFileContent = async (
   content: string
 ): Promise<void> => {
   try {
+    await fs.mkdir(path.dirname(filePath), { recursive: true })
     await fs.writeFile(filePath, content)
   } catch (error) {
     logError(`Error writing to file "${filePath}"`, error as Error)
@@ -50,6 +51,43 @@ const mergeAddresses = (addresses: string[]): string[] => {
   }
 }
 
+const generateOutputPath = (
+  sourceFilePath: string,
+  outputSuffix: string
+): string => {
+  const dirName = path.dirname(sourceFilePath)
+  const baseName = path.basename(sourceFilePath, path.extname(sourceFilePath))
+  const extension = path.extname(sourceFilePath)
+  return path.join(dirName, `${baseName}${outputSuffix}${extension}`)
+}
+
+const findFiles = async (
+  dir: string,
+  fileNames: Set<string>
+): Promise<string[]> => {
+  const results: string[] = []
+  const stack: string[] = [dir]
+
+  while (stack.length > 0) {
+    const currentDir = stack.pop()!
+    try {
+      const list = await fs.readdir(currentDir, { withFileTypes: true })
+      for (const dirent of list) {
+        const filePath = path.join(currentDir, dirent.name)
+        if (dirent.isDirectory()) {
+          stack.push(filePath)
+        } else if (fileNames.has(dirent.name)) {
+          results.push(filePath)
+        }
+      }
+    } catch (error) {
+      logError(`Error reading directory "${currentDir}"`, error as Error)
+    }
+  }
+
+  return results
+}
+
 const processFile = async (
   sourceFilePath: string,
   outputSuffix: string,
@@ -59,7 +97,7 @@ const processFile = async (
     const addresses = await readFileLines(sourceFilePath)
 
     if (addresses.length === 0) {
-      console.log(`File "${sourceFilePath}" is empty. Skipping processing.`)
+      logMessage(`File "${sourceFilePath}" is empty. Skipping processing.`)
       return null
     }
 
@@ -74,33 +112,8 @@ const processFile = async (
     return outputFilePath
   } catch (error) {
     logError(`Error processing file "${sourceFilePath}"`, error as Error)
-    throw error
+    return null
   }
-}
-
-const generateOutputPath = (
-  sourceFilePath: string,
-  outputSuffix: string
-): string => {
-  const dirName = path.dirname(sourceFilePath)
-  const baseName = path.basename(sourceFilePath, path.extname(sourceFilePath))
-  const extension = path.extname(sourceFilePath)
-  return path.join(dirName, `${baseName}${outputSuffix}${extension}`)
-}
-
-const findFiles = async (dir: string, pattern: RegExp): Promise<string[]> => {
-  let results: string[] = []
-  const list = await fs.readdir(dir)
-  for (const file of list) {
-    const filePath = path.join(dir, file)
-    const stat = await fs.stat(filePath)
-    if (stat && stat.isDirectory()) {
-      results = results.concat(await findFiles(filePath, pattern))
-    } else if (pattern.test(filePath)) {
-      results.push(filePath)
-    }
-  }
-  return results
 }
 
 const processFiles = async (
@@ -109,26 +122,22 @@ const processFiles = async (
   options: { commaSeparated: boolean }
 ): Promise<string[]> => {
   try {
-    const processResults: string[] = []
+    const fileNameSet = new Set(filesToProcess)
+    const filesFound = await findFiles(process.cwd(), fileNameSet)
 
-    for (const fileName of filesToProcess) {
-      const pattern = new RegExp(fileName.replace(/\./g, '\\.') + '$', 'i')
-      const filesFound = await findFiles(process.cwd(), pattern)
-
-      if (filesFound.length === 0) {
-        console.error(`File "${fileName}" not found.`)
-        continue
-      }
-
-      for (const sourceFilePath of filesFound) {
-        const result = await processFile(sourceFilePath, outputSuffix, options)
-        if (result) {
-          processResults.push(result)
-        }
-      }
+    if (filesFound.length === 0) {
+      console.error('No files found to process.')
+      return []
     }
 
-    return processResults
+    const processedFiles = await Promise.all(
+      filesFound.map(async (sourceFilePath) => {
+        const result = await processFile(sourceFilePath, outputSuffix, options)
+        return result
+      })
+    )
+
+    return processedFiles.filter((res): res is string => res !== null)
   } catch (error: unknown) {
     logError(`Error processing files`, error as Error)
     return []
@@ -137,24 +146,47 @@ const processFiles = async (
 
 const main = async (): Promise<void> => {
   const args = process.argv.slice(2)
-  const option = args[0]
+  const options = args[0]
   const filesToProcess = args.slice(1)
 
-  if (!['-m', '-c'].includes(option) || filesToProcess.length === 0) {
+  if (
+    !['-m', '-c', '-mc', '-cm'].includes(options) ||
+    filesToProcess.length === 0
+  ) {
     console.error(
-      'Invalid command. Usage: node dist/compress.js [-m | -c] file1.txt [file2.txt ...]'
+      'Invalid command. Usage: node dist/compress.js [-m | -c | -mc] file1.txt [file2.txt ...]'
     )
     process.exit(1)
   }
 
-  const outputSuffix = option === '-m' ? '_mini' : '_comma'
-  const commaSeparated = option === '-c'
+  const outputSuffixes: string[] = []
+  const commaSeparatedOptions: boolean[] = []
 
-  const results = await processFiles(filesToProcess, outputSuffix, {
-    commaSeparated
-  })
+  if (options.includes('-m')) {
+    outputSuffixes.push('_mini')
+    commaSeparatedOptions.push(false)
+  }
 
-  console.log('All files processed successfully:', results)
+  if (options.includes('-c')) {
+    outputSuffixes.push('_comma')
+    commaSeparatedOptions.push(true)
+  }
+
+  try {
+    const results = await Promise.all(
+      outputSuffixes.map((suffix, index) =>
+        processFiles(filesToProcess, suffix, {
+          commaSeparated: commaSeparatedOptions[index]
+        })
+      )
+    )
+    const flattenedResults = results.flat()
+
+    console.log('All files processed successfully:', flattenedResults)
+  } catch (error) {
+    logError('Unhandled error in main execution', error as Error)
+    process.exit(1)
+  }
 }
 
 main().catch((error) => {

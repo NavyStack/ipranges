@@ -1,6 +1,6 @@
 {
   "name": "navystack-ipranges",
-  "version": "0.6.0",
+  "version": "0.7.1",
   "description": "A tool for processing and merging CIDR ranges in IP address files.",
   "type": "module",
   "scripts": {

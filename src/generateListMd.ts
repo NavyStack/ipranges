@@ -48,7 +48,6 @@ const generateListMd = async (): Promise<void> => {
   )
 
   const markdown = [
-    '# Project Directory Structure\n',
     ...sections.filter(Boolean),
     `\n${counts.directories} directories, ${counts.files} files\n`
   ].join('')
