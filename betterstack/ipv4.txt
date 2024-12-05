@@ -1,23 +1,59 @@
-49.13.136.7
-66.228.53.233
-66.228.56.140
-66.228.56.189
-69.164.207.190
-91.107.221.68
-103.3.60.124
-104.237.134.64
-139.162.58.253
-139.162.71.39
-139.162.121.226
-139.162.121.238
-139.162.215.113
-139.162.215.114
-168.119.178.203
-172.104.181.25
-172.105.162.194
-172.105.177.82
-192.155.95.211
-194.195.253.108
-194.195.253.111
-194.195.253.114
-213.168.248.219
+<!DOCTYPE html>
+<html class='min-h-screen dark overflow-hidden'>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+  <meta charset='utf-8'>
+  <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' id='viewport' name='viewport'>
+  <title>Better Stack is under maintenance</title>
+  <meta content='no-cache' name='turbo-cache-control'>
+  <script type="application/javascript" defer="defer" nonce="ae244fe22718f490fa1637dba082d477">
+    //<![CDATA[
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){window.dataLayer.push(arguments);}
+    gtag('js', new Date());
+    //]]>
+  </script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+      a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+    twq('config','o7hjd');
+      o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")},n=d.createElement(t),n.src=r,n.async=1,
+      n.onload=n.onreadystatechange=function(){var s=this.readyState;s&&s!=="loaded"&&s!=="complete"||(f(),
+        n.onload=n.onreadystatechange=null)},i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)})
+    (window,document,"script","//bat.bing.com/bat.js","uetq");
+      if (typeof gtag === "function") {
+        gtag("set", "page_path", location.pathname);
+        fbq('track', 'PageView');
+        twq('track','PageView');
+        return gtag("event", "page_view");
+      }
+    });
+    // remove noscript elements which break DOMParser
+      event.detail.newBody.querySelectorAll('noscript').forEach((e) => e.remove());
+</head>
+<body class='min-h-screen font-inter text-base flex flex-col items-center justify-center bg-[#0B0C14]' data-aos-duration='400'>
+  <div class='absolute inset-0 overflow-hidden'>
+    <div class='absolute flex justify-center left-1/2 -translate-x-1/2 w-[1188px] top-[173px]'>
+    </div>
+  </div>
+  <div class='relative w-full grow flex justify-center items-center'>
+    <main class='pt-24 pb-10 w-full' data-aos='zoom-in-down' data-aos-easing='ease-out'>
+      <div class='flex flex-col justify-center items-center'>
+          <h1 class='mt-4 text-xl font-semibold text-white'>Better Stack is under maintenance</h1>
+          <p class='mt-4'>
+          </p>
+            Thank you for your understanding.
+        </div>
+      </div>
+    </main>
+  <div class='my-12 text-sm text-center relative z-10'>
+    <div class='flex flex-row text-neutral-300'>
+      &nbsp;&middot;&nbsp;
+  <script nonce="ae244fe22718f490fa1637dba082d477">
+    var INTERCOM_APP_ID = 'tl8qyoha';
+    window.Intercom("boot", {
+  <noscript>
+  </noscript>
+</body>
+</html>
