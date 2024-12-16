@@ -27,7 +27,7 @@
     "@types/eslint__js": "^8.42.3",
     "@types/node": "^22.10.1",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
-    "@typescript-eslint/parser": "^8.17.0",
+    "@typescript-eslint/parser": "^8.18.1",
     "cidr-tools": "^11.0.2",
     "eslint": "^9.16.0",
     "node-fetch": "^3.3.2",
