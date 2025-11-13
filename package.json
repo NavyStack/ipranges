@@ -29,7 +29,7 @@
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
     "cidr-tools": "^11.0.2",
-    "eslint": "^9.16.0",
+    "eslint": "^9.19.0",
     "node-fetch": "^3.3.2",
     "prettier": "^3.4.2",
     "prettier-plugin-sh": "^0.14.0",
