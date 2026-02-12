@@ -34,10 +34,10 @@ importers:
         version: 3.3.2
       prettier:
         specifier: ^3.4.2
-        version: 3.4.2
+        version: 3.8.1
       prettier-plugin-sh:
         specifier: ^0.14.0
-        version: 0.14.0(prettier@3.4.2)
+        version: 0.14.0(prettier@3.8.1)
       tsx:
         specifier: ^4.19.1
         version: 4.19.2
@@ -651,6 +651,7 @@ packages:
 
   mvdan-sh@0.10.1:
     resolution: {integrity: sha512-kMbrH0EObaKmK3nVRKUIIya1dpASHIEusM13S4V1ViHFuxuNxCo+arxoa6j/dbV22YBGjl7UKJm9QQKJ2Crzhg==}
+    deprecated: See https://github.com/mvdan/sh/issues/1145
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
@@ -658,6 +659,7 @@ packages:
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
+    deprecated: Use your platform's native DOMException instead
 
   node-fetch@3.3.2:
     resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
@@ -701,8 +703,8 @@ packages:
     peerDependencies:
       prettier: ^3.0.3
 
-  prettier@3.4.2:
-    resolution: {integrity: sha512-e9MewbtFo+Fevyuxn/4rrcDAaq0IYxPGLvObpQjiZBMAzB9IGmzlnG9RZy3FFas+eBMu2vA0CszMeduow5dIuQ==}
+  prettier@3.8.1:
+    resolution: {integrity: sha512-UOnG6LftzbdaHZcKoPFtOcCKztrQ57WkHDeRD9t/PTQtmT0NHSeWWepj6pS0z/N7+08BHFDQVUrfmfMRcZwbMg==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -1450,13 +1452,13 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier-plugin-sh@0.14.0(prettier@3.4.2):
+  prettier-plugin-sh@0.14.0(prettier@3.8.1):
     dependencies:
       mvdan-sh: 0.10.1
-      prettier: 3.4.2
+      prettier: 3.8.1
       sh-syntax: 0.4.2
 
-  prettier@3.4.2: {}
+  prettier@3.8.1: {}
 
   punycode@2.3.1: {}
 
