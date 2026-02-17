@@ -25,7 +25,7 @@ importers:
         version: 8.17.0(eslint@9.16.0)(typescript@5.7.2)
       cidr-tools:
         specifier: ^11.0.2
-        version: 11.0.2
+        version: 11.0.10
       eslint:
         specifier: ^9.16.0
         version: 9.16.0
@@ -418,8 +418,8 @@ packages:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
 
-  cidr-tools@11.0.2:
-    resolution: {integrity: sha512-OLeM9EOXybbhMsGGBNRLCMjn8e+wFOXARIShF/sZwmJLsxWywqfE0By4BMftT6BFWpbcETWpW7TfM2KGCtrZDg==}
+  cidr-tools@11.0.10:
+    resolution: {integrity: sha512-941XR5nh4TkLsuzFSeSDeo++iU27VrxKk0ftQnF40mpeH2W6YjY7lGq6Xvvy22Yrc852modAyB+FBqCaqh+3QQ==}
     engines: {node: '>=18'}
 
   color-convert@2.0.1:
@@ -585,8 +585,8 @@ packages:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
     engines: {node: '>=0.8.19'}
 
-  ip-bigint@8.2.0:
-    resolution: {integrity: sha512-46EAEKzGNxojH5JaGEeCix49tL4h1W8ia5mhogZ68HroVAfyLj1E+SFFid4GuyK0mdIKjwcAITLqwg1wlkx2iQ==}
+  ip-bigint@8.2.6:
+    resolution: {integrity: sha512-H1K1ZhBuvr8YfxW+5Y4Fo6oaJg6WoEApG2phRQu3zIWLurCvznm2LL/yLSc6SNtT4CfaOT2gRklMDmWaPlkEzQ==}
     engines: {node: '>=18'}
 
   is-extglob@2.1.1:
@@ -651,6 +651,7 @@ packages:
 
   mvdan-sh@0.10.1:
     resolution: {integrity: sha512-kMbrH0EObaKmK3nVRKUIIya1dpASHIEusM13S4V1ViHFuxuNxCo+arxoa6j/dbV22YBGjl7UKJm9QQKJ2Crzhg==}
+    deprecated: See https://github.com/mvdan/sh/issues/1145
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
@@ -658,6 +659,7 @@ packages:
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
+    deprecated: Use your platform's native DOMException instead
 
   node-fetch@3.3.2:
     resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
@@ -1157,9 +1159,9 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
-  cidr-tools@11.0.2:
+  cidr-tools@11.0.10:
     dependencies:
-      ip-bigint: 8.2.0
+      ip-bigint: 8.2.6
 
   color-convert@2.0.1:
     dependencies:
@@ -1355,7 +1357,7 @@ snapshots:
 
   imurmurhash@0.1.4: {}
 
-  ip-bigint@8.2.0: {}
+  ip-bigint@8.2.6: {}
 
   is-extglob@2.1.1: {}
 
